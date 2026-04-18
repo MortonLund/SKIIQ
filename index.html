@@ -524,7 +524,7 @@ let videoUrl = null;
 const UI_TEXT = {
   da: {
     uploadTitle: 'Upload video eller billede',
-    uploadSub: 'Upload en video — spol til svinget starter og tryk "Mark sving her".',
+    uploadSub: 'Træk og start videoen derfra, hvor du vil starte analysen. Analysen sker på 1-2 sving derefter.',
     videoLabel: 'Spol til svinget starter',
     markBtn: '▶ Mark sving her',
     framesLabel: '{{n}} frames udtrukket',
@@ -543,7 +543,7 @@ const UI_TEXT = {
   },
   en: {
     uploadTitle: 'Upload video or image',
-    uploadSub: 'Upload a video — scrub to where the turn starts and press "Mark turn here".',
+    uploadSub: 'Scrub the video to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
     videoLabel: 'Scrub to where the turn starts',
     markBtn: '▶ Mark turn here',
     framesLabel: '{{n}} frames extracted',
@@ -562,7 +562,7 @@ const UI_TEXT = {
   },
   zh: {
     uploadTitle: '上传视频或图片',
-    uploadSub: '上传视频——拖动到转弯开始处，然后按"在此标记转弯"。',
+    uploadSub: '拖动视频进度条到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
     videoLabel: '拖动到转弯开始处',
     markBtn: '▶ 在此标记转弯',
     framesLabel: '已提取{{n}}帧',
@@ -710,8 +710,10 @@ function captureFrames(video, timestamps, url, labels) {
         resetApp();
         return;
       }
-      extractedFrames = frames;
-      showFrames(frames, (labels || []).slice(0, frames.length));
+      applyMotionCrop(frames).then(cropped => {
+        extractedFrames = cropped;
+        showFrames(cropped, (labels || []).slice(0, cropped.length));
+      });
       return;
     }
     try {
@@ -736,6 +738,98 @@ function captureFrames(video, timestamps, url, labels) {
   };
 
   captureNext();
+}
+
+// ─── MOTION CROP ──────────────────────────────────────────────────────────────
+async function applyMotionCrop(frames) {
+  if (frames.length < 2) return frames;
+
+  // Load all frames at reduced resolution for fast pixel comparison
+  const small = await Promise.all(frames.map(f => loadFrameSmall(f, 256)));
+
+  // Compute per-frame motion centroid vs neighbours
+  const centroids = small.map((sf, i) => {
+    const prev = small[Math.max(0, i - 1)];
+    const next = small[Math.min(small.length - 1, i + 1)];
+    return getMotionCentroid(sf, prev, next);
+  });
+
+  // 3-frame moving average to smooth jitter
+  const smoothed = centroids.map((_, i) => {
+    const win = centroids.slice(Math.max(0, i - 1), i + 2);
+    return {
+      x: win.reduce((s, c) => s + c.x, 0) / win.length,
+      y: win.reduce((s, c) => s + c.y, 0) / win.length,
+    };
+  });
+
+  return Promise.all(frames.map((frame, i) =>
+    cropToCentroid(frame, smoothed[i].x, smoothed[i].y)
+  ));
+}
+
+function loadFrameSmall(dataUrl, maxSize) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = maxSize / Math.max(img.width, img.height);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const pixels = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+      resolve({ pixels, w, h });
+    };
+    img.src = dataUrl;
+  });
+}
+
+function getMotionCentroid(cur, prev, next) {
+  const { pixels, w, h } = cur;
+  const THRESHOLD = 75; // sum of R+G+B diff per pixel
+  let sumX = 0, sumY = 0, count = 0;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = (y * w + x) * 4;
+      const diffPrev = Math.abs(pixels[idx]   - prev.pixels[idx])   +
+                       Math.abs(pixels[idx+1] - prev.pixels[idx+1]) +
+                       Math.abs(pixels[idx+2] - prev.pixels[idx+2]);
+      const diffNext = Math.abs(pixels[idx]   - next.pixels[idx])   +
+                       Math.abs(pixels[idx+1] - next.pixels[idx+1]) +
+                       Math.abs(pixels[idx+2] - next.pixels[idx+2]);
+      if (Math.max(diffPrev, diffNext) > THRESHOLD) {
+        sumX += x; sumY += y; count++;
+      }
+    }
+  }
+
+  // Fallback to center if not enough motion detected
+  if (count < 20) return { x: 0.5, y: 0.5 };
+  return { x: (sumX / count) / w, y: (sumY / count) / h };
+}
+
+function cropToCentroid(dataUrl, cx, cy) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const W = img.width, H = img.height;
+      const CROP = 0.70;
+      const cw = Math.round(W * CROP);
+      const ch = Math.round(H * CROP);
+      let x = Math.round(cx * W - cw / 2);
+      let y = Math.round(cy * H - ch / 2);
+      x = Math.max(0, Math.min(W - cw, x));
+      y = Math.max(0, Math.min(H - ch, y));
+      const out = document.createElement('canvas');
+      out.width = Math.min(W, 1024);
+      out.height = Math.min(H, 1024);
+      out.getContext('2d').drawImage(img, x, y, cw, ch, 0, 0, out.width, out.height);
+      resolve(out.toDataURL('image/jpeg', 0.80));
+    };
+    img.src = dataUrl;
+  });
 }
 
 function showFramesLoading(count) {
