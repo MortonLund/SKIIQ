@@ -782,27 +782,33 @@ function loadFrameSmall(dataUrl, maxSize) {
 }
 
 function getDarkCentroid({ pixels, w, h }) {
-  // Weighted centroid of pixels darker than threshold (skier vs bright snow)
-  const THRESHOLD = 160;
-  let sumX = 0, sumY = 0, count = 0;
+  // Lower threshold: only pick up truly dark things (clothes, skis, not shadows)
+  const THRESHOLD = 130;
+  let sumX = 0, sumY = 0, total = 0;
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const idx = (y * w + x) * 4;
-      // Perceptual grayscale weight
       const brightness = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
       if (brightness < THRESHOLD) {
-        // Weight darker pixels more heavily so the skier's body dominates
-        const weight = THRESHOLD - brightness;
+        const darkness = THRESHOLD - brightness;
+
+        // Gaussian weight centred on image midpoint — suppresses trees/mountains at edges
+        // exp factor 6: edge pixels get ~5% of the weight of centre pixels
+        const dx = x / w - 0.5;
+        const dy = y / h - 0.5;
+        const centerWeight = Math.exp(-(dx * dx + dy * dy) * 6);
+
+        const weight = darkness * centerWeight;
         sumX += x * weight;
         sumY += y * weight;
-        count += weight;
+        total += weight;
       }
     }
   }
 
-  if (count < 500) return { x: 0.5, y: 0.5 }; // not enough dark pixels — fallback to center
-  return { x: (sumX / count) / w, y: (sumY / count) / h };
+  if (total < 100) return { x: 0.5, y: 0.5 };
+  return { x: (sumX / total) / w, y: (sumY / total) / h };
 }
 
 function cropToCentroid(dataUrl, cx, cy) {
@@ -818,9 +824,9 @@ function cropToCentroid(dataUrl, cx, cy) {
       x = Math.max(0, Math.min(W - cw, x));
       y = Math.max(0, Math.min(H - ch, y));
       const out = document.createElement('canvas');
-      out.width = Math.min(W, 1024);
-      out.height = Math.min(H, 1024);
-      out.getContext('2d').drawImage(img, x, y, cw, ch, 0, 0, out.width, out.height);
+      out.width = W;
+      out.height = H;
+      out.getContext('2d').drawImage(img, x, y, cw, ch, 0, 0, W, H);
       resolve(out.toDataURL('image/jpeg', 0.80));
     };
     img.src = dataUrl;
