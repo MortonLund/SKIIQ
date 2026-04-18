@@ -520,6 +520,7 @@ let frameLabels = [];
 let currentFile = null;
 let videoEl = null;
 let videoUrl = null;
+let cropGeneration = 0;
 
 const UI_TEXT = {
   da: {
@@ -697,11 +698,12 @@ function markTurnStart() {
   const timestamps = validOffsets.map(o => startTime + o);
   const labels = validOffsets.map(o => `+${o.toFixed(2)}s`);
 
+  const gen = ++cropGeneration;
   showFramesLoading(timestamps.length);
-  captureFrames(videoEl, timestamps, videoUrl, labels);
+  captureFrames(videoEl, timestamps, videoUrl, labels, gen);
 }
 
-function captureFrames(video, timestamps, url, labels) {
+function captureFrames(video, timestamps, url, labels, gen) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   const frames = [];
@@ -718,6 +720,7 @@ function captureFrames(video, timestamps, url, labels) {
         return;
       }
       applyMotionCrop(frames).then(cropped => {
+        if (gen !== cropGeneration) return; // reset happened — discard
         extractedFrames = cropped;
         showFrames(cropped, (labels || []).slice(0, cropped.length));
       });
@@ -1051,6 +1054,7 @@ function showError(msg) {
 }
 
 function resetApp() {
+  cropGeneration++;
   extractedFrames = [];
   frameLabels = [];
   currentFile = null;
