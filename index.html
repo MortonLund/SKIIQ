@@ -711,6 +711,7 @@ function captureFrames(video, timestamps, url, labels, gen) {
 
   function captureNext() {
     if (idx >= timestamps.length) {
+      video.onseeked = null;
       URL.revokeObjectURL(url);
       videoUrl = null;
       videoEl = null;
@@ -1061,6 +1062,9 @@ function resetApp() {
   if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
   videoEl = null;
   const preview = document.getElementById('videoPreview');
+  preview.onloadeddata = null;
+  preview.onerror = null;
+  preview.onseeked = null;
   preview.pause();
   preview.removeAttribute('src');
   preview.load();
