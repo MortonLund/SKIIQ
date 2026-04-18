@@ -470,7 +470,7 @@
   <div class="video-preview-section" id="videoPreviewSection">
     <div class="section-label" id="videoPreviewLabel">Spol til svinget starter</div>
     <video id="videoPreview" controls playsinline muted></video>
-    <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Mark sving her</button>
+    <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Vælg start på analyse</button>
   </div>
 
   <!-- Frames -->
@@ -526,7 +526,7 @@ const UI_TEXT = {
     uploadTitle: 'Upload video eller billede',
     uploadSub: 'Træk og start videoen derfra, hvor du vil starte analysen. Analysen sker på 1-2 sving derefter.',
     videoLabel: 'Spol til svinget starter',
-    markBtn: '▶ Mark sving her',
+    markBtn: '▶ Vælg start på analyse',
     framesLabel: '{{n}} frames udtrukket',
     analyzeBtn: 'Analysér mit skiløb',
     loadingTitle: 'Analyserer dit skiløb...',
@@ -545,7 +545,7 @@ const UI_TEXT = {
     uploadTitle: 'Upload video or image',
     uploadSub: 'Scrub the video to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
     videoLabel: 'Scrub to where the turn starts',
-    markBtn: '▶ Mark turn here',
+    markBtn: '▶ Select start of analysis',
     framesLabel: '{{n}} frames extracted',
     analyzeBtn: 'Analyse my skiing',
     loadingTitle: 'Analysing your skiing...',
@@ -564,7 +564,7 @@ const UI_TEXT = {
     uploadTitle: '上传视频或图片',
     uploadSub: '拖动视频进度条到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
     videoLabel: '拖动到转弯开始处',
-    markBtn: '▶ 在此标记转弯',
+    markBtn: '▶ 选择分析起点',
     framesLabel: '已提取{{n}}帧',
     analyzeBtn: '分析我的滑雪',
     loadingTitle: '正在分析您的滑雪...',
@@ -684,6 +684,13 @@ function markTurnStart() {
   const duration = videoEl.duration || Infinity;
 
   document.getElementById('videoPreviewSection').classList.remove('visible');
+
+  // Clear any frames from a previous analysis before showing new ones
+  extractedFrames = [];
+  frameLabels = [];
+  document.getElementById('framesGrid').innerHTML = '';
+  document.getElementById('framesSection').classList.remove('visible');
+  document.getElementById('analyzeBtn').classList.remove('visible');
 
   const offsets = [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
   const validOffsets = offsets.filter(o => (startTime + o) <= duration);
