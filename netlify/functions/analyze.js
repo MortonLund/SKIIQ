@@ -21,7 +21,7 @@ exports.handler = async function(event) {
 
     const phaseLabels = frameLabels && frameLabels.length
       ? frameLabels
-      : ['Omkantning', 'Tidlig styrefase', 'Sen styrefase', 'Udløsningsfase'];
+      : Array.from({ length: (images || []).length }, (_, i) => `+${(i * 0.25).toFixed(2)}s`);
 
     const langInstr = language === 'da' ? 'Respond entirely in Danish.' :
                       language === 'zh' ? 'Respond entirely in Simplified Chinese (Mandarin).' :
@@ -34,12 +34,16 @@ ${langInstr}
 ═══════════════════════════════════════
 STEP 1: FRAME REVIEW
 ═══════════════════════════════════════
-You will receive 3 frames from a single ski turn, labelled:
-1. MOD SIDEN / APPROACHING: Skier moving toward one side — turn has just begun.
-2. MOD KAMERAET / FACING CAMERA: Skier pointing directly toward camera — fall line moment, maximum load on outer ski.
-3. TIL DEN ANDEN SIDE / DEPARTING: Skier moving toward the other side — turn is finishing.
+You will receive 8-10 frames from approximately 2 seconds of a single ski turn. Each frame is labelled with its relative timestamp from when the user marked the turn start (e.g. +0.00s, +0.25s, ..., +2.00s).
 
-For each frame, note whether it is usable (skier clearly visible). Proceed with whatever usable frames remain. Frame 2 (fall line) is the most diagnostic — weight distribution, flex, and balance are most visible here.
+Read the sequence as a motion clip — identify:
+- TURN INITIATION (first frames ~+0.00s to +0.50s): Weight shifting to new outer ski, edge change beginning
+- APPROACHING FALL LINE (~+0.50s to +1.00s): Ski tips moving toward camera, load building on outer ski
+- FALL LINE (~+1.00s to +1.25s): Ski tips pointing toward camera — MOST DIAGNOSTIC. Evaluate weight distribution, flex angles, and balance here.
+- STEERING PHASE (~+1.25s to +1.75s): Crossing fall line, outer ski steering through arc
+- TURN COMPLETION (~+1.75s to +2.00s): Finishing turn, preparing for next edge change
+
+Note any frames that are too blurry or unusable. Proceed with what you have — even 3 good frames is enough for a quality assessment.
 
 ═══════════════════════════════════════
 STEP 2: PERFORMANCE ANALYSIS

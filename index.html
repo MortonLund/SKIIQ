@@ -151,6 +151,37 @@
     margin-bottom: 12px;
   }
 
+  /* VIDEO PREVIEW */
+  .video-preview-section {
+    margin-top: 20px;
+    display: none;
+  }
+  .video-preview-section.visible { display: block; }
+  #videoPreview {
+    width: 100%;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    background: #000;
+    display: block;
+    max-height: 340px;
+    object-fit: contain;
+  }
+  .mark-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(93,173,226,0.4);
+    background: rgba(93,173,226,0.1);
+    color: var(--frost);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .mark-btn:hover { background: rgba(93,173,226,0.22); }
+
   .frames-grid {
     display: grid;
     gap: 6px;
@@ -435,6 +466,13 @@
     <div class="upload-sub" id="uploadSub">Optag et sving på pisten og upload det her.<br>Video eller billede accepteres.</div>
   </div>
 
+  <!-- Video preview + mark button -->
+  <div class="video-preview-section" id="videoPreviewSection">
+    <div class="section-label" id="videoPreviewLabel">Spol til svinget starter</div>
+    <video id="videoPreview" controls playsinline muted></video>
+    <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Mark sving her</button>
+  </div>
+
   <!-- Frames -->
   <div class="frames-section" id="framesSection">
     <div class="section-label" id="framesLabel">3 frames udtrukket</div>
@@ -478,25 +516,24 @@
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let currentLang = 'da';
 let extractedFrames = [];
+let frameLabels = [];
 let currentFile = null;
-
-const FRAME_LABELS = {
-  da: ['Mod siden', 'Mod kameraet', 'Til den anden side'],
-  en: ['Approaching', 'Facing camera', 'Departing'],
-  zh: ['转向一侧', '面向镜头', '转向另一侧']
-};
+let videoEl = null;
+let videoUrl = null;
 
 const UI_TEXT = {
   da: {
     uploadTitle: 'Upload video eller billede',
-    uploadSub: 'Optag ét sving på pisten og upload det her.\nVideo eller billede accepteres.',
-    framesLabel: '3 frames fra svingfaser udtrukket',
+    uploadSub: 'Upload en video — spol til svinget starter og tryk "Mark sving her".',
+    videoLabel: 'Spol til svinget starter',
+    markBtn: '▶ Mark sving her',
+    framesLabel: '{{n}} frames udtrukket',
     analyzeBtn: 'Analysér mit skiløb',
     loadingTitle: 'Analyserer dit skiløb...',
     loadingSub: 'AI skiinstruktør er i gang',
-    steps: ['Udtrækker 3 frames fra svinget', 'Analyserer teknik og balance', 'Identificerer rodårsag og fejlkæde', 'Sammenstiller feedback'],
+    steps: ['Sender frames til analyse', 'Analyserer teknik og balance', 'Identificerer rodårsag og fejlkæde', 'Sammenstiller feedback'],
     resultTitle: 'Din skianalyse',
-    resultSubtitle: 'Baseret på 3 frames · Den Danske Skiskole',
+    resultSubtitle: 'Den Danske Skiskole · D15',
     newBtn: '↩ Ny analyse',
     labelStrengths: '✓ Det der fungerer',
     labelFocus: '→ Dit udviklingsfokus',
@@ -506,14 +543,16 @@ const UI_TEXT = {
   },
   en: {
     uploadTitle: 'Upload video or image',
-    uploadSub: 'Film one turn on the slope and upload it here.\nVideo or image accepted.',
-    framesLabel: '3 turn frames extracted',
+    uploadSub: 'Upload a video — scrub to where the turn starts and press "Mark turn here".',
+    videoLabel: 'Scrub to where the turn starts',
+    markBtn: '▶ Mark turn here',
+    framesLabel: '{{n}} frames extracted',
     analyzeBtn: 'Analyse my skiing',
     loadingTitle: 'Analysing your skiing...',
     loadingSub: 'AI ski instructor is working',
-    steps: ['Extracting 3 frames from the turn', 'Analysing technique and balance', 'Identifying root cause and error chain', 'Compiling feedback'],
+    steps: ['Sending frames for analysis', 'Analysing technique and balance', 'Identifying root cause and error chain', 'Compiling feedback'],
     resultTitle: 'Your ski analysis',
-    resultSubtitle: 'Based on 3 frames · Danish Ski School',
+    resultSubtitle: 'Danish Ski School · D15',
     newBtn: '↩ New analysis',
     labelStrengths: '✓ What is working',
     labelFocus: '→ Your development focus',
@@ -523,14 +562,16 @@ const UI_TEXT = {
   },
   zh: {
     uploadTitle: '上传视频或图片',
-    uploadSub: '在坡道上录制一个转弯并上传。\n接受视频或图片格式。',
-    framesLabel: '已提取3帧转弯画面',
+    uploadSub: '上传视频——拖动到转弯开始处，然后按"在此标记转弯"。',
+    videoLabel: '拖动到转弯开始处',
+    markBtn: '▶ 在此标记转弯',
+    framesLabel: '已提取{{n}}帧',
     analyzeBtn: '分析我的滑雪',
     loadingTitle: '正在分析您的滑雪...',
     loadingSub: 'AI滑雪教练正在分析',
-    steps: ['从转弯中提取3帧', '分析技术与平衡', '识别根本原因与错误链', '整合反馈意见'],
+    steps: ['发送帧进行分析', '分析技术与平衡', '识别根本原因与错误链', '整合反馈意见'],
     resultTitle: '您的滑雪分析',
-    resultSubtitle: '基于3帧画面 · 丹麦滑雪学校',
+    resultSubtitle: '丹麦滑雪学校 · D15',
     newBtn: '↩ 新的分析',
     labelStrengths: '✓ 做得好的地方',
     labelFocus: '→ 改进重点',
@@ -549,6 +590,8 @@ function setLang(lang, btn) {
   document.getElementById('uploadTitle').textContent = t.uploadTitle;
   document.getElementById('uploadSub').textContent = t.uploadSub;
   document.getElementById('analyzeBtnText').textContent = t.analyzeBtn;
+  document.getElementById('videoPreviewLabel').textContent = t.videoLabel;
+  document.getElementById('markBtn').textContent = t.markBtn;
 }
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
@@ -600,50 +643,58 @@ function extractFramesFromImage(file) {
   reader.onload = (e) => {
     resizeImageToBase64(e.target.result, 1024, 1024, (resized) => {
       extractedFrames = [resized];
-      showFrames(extractedFrames);
+      showFrames(extractedFrames, ['Billede']);
     });
   };
   reader.readAsDataURL(file);
 }
 
 function extractFramesFromVideo(file) {
-  showFramesLoading(3);
-  const video = document.createElement('video');
-  video.preload = 'auto';
-  video.muted = true;
-  video.playsInline = true;
-  video.setAttribute('playsinline', '');
-
+  const preview = document.getElementById('videoPreview');
   const url = URL.createObjectURL(file);
-  video.src = url;
+  videoUrl = url;
 
-  // Timeout fallback
   const timeout = setTimeout(() => {
     URL.revokeObjectURL(url);
+    videoUrl = null;
     showError('Video kunne ikke læses. Prøv at uploade et billede i stedet.');
-    resetApp();
   }, 10000);
 
-  video.onloadeddata = () => {
+  preview.onloadeddata = () => {
     clearTimeout(timeout);
-    const duration = video.duration || 5;
-    // 4 frames targeting the key phases of one ski turn
-    // 3 frames: approaching one side, facing camera (fall line), departing other side
-    const timestamps = [0.20, 0.50, 0.78].map(p => p * duration);
-    captureFrames(video, timestamps, url);
+    videoEl = preview;
+    document.getElementById('videoPreviewSection').classList.add('visible');
   };
 
-  video.onerror = () => {
+  preview.onerror = () => {
     clearTimeout(timeout);
     URL.revokeObjectURL(url);
+    videoUrl = null;
     showError('Video kunne ikke læses. Prøv at uploade et billede i stedet.');
-    resetApp();
   };
 
-  video.load();
+  preview.src = url;
+  preview.load();
 }
 
-function captureFrames(video, timestamps, url) {
+function markTurnStart() {
+  if (!videoEl) return;
+
+  const startTime = videoEl.currentTime;
+  const duration = videoEl.duration || Infinity;
+
+  document.getElementById('videoPreviewSection').classList.remove('visible');
+
+  const offsets = [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+  const validOffsets = offsets.filter(o => (startTime + o) <= duration);
+  const timestamps = validOffsets.map(o => startTime + o);
+  const labels = validOffsets.map(o => `+${o.toFixed(2)}s`);
+
+  showFramesLoading(timestamps.length);
+  captureFrames(videoEl, timestamps, videoUrl, labels);
+}
+
+function captureFrames(video, timestamps, url, labels) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   const frames = [];
@@ -652,13 +703,15 @@ function captureFrames(video, timestamps, url) {
   function captureNext() {
     if (idx >= timestamps.length) {
       URL.revokeObjectURL(url);
+      videoUrl = null;
+      videoEl = null;
       if (frames.length === 0) {
         showError('Kunne ikke udtrække frames. Prøv et billede i stedet.');
         resetApp();
         return;
       }
       extractedFrames = frames;
-      showFrames(frames);
+      showFrames(frames, (labels || []).slice(0, frames.length));
       return;
     }
     try {
@@ -698,24 +751,25 @@ function showFramesLoading(count) {
   document.getElementById('framesSection').classList.add('visible');
 }
 
-function showFrames(frames) {
+function showFrames(frames, labels) {
   const t = UI_TEXT[currentLang];
-  const labels = FRAME_LABELS[currentLang];
   const grid = document.getElementById('framesGrid');
   grid.innerHTML = '';
-  grid.style.gridTemplateColumns = `repeat(${frames.length}, 1fr)`;
+  const cols = Math.min(frames.length, 3);
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  frameLabels = labels || [];
 
   frames.forEach((src, i) => {
     const item = document.createElement('div');
     item.className = 'frame-item';
     item.innerHTML = `
       <img src="${src}" alt="Frame ${i+1}">
-      <div class="frame-label">${labels[i]}</div>
+      <div class="frame-label">${frameLabels[i] || ''}</div>
     `;
     grid.appendChild(item);
   });
 
-  document.getElementById('framesLabel').textContent = t.framesLabel;
+  document.getElementById('framesLabel').textContent = t.framesLabel.replace('{{n}}', frames.length);
   document.getElementById('framesSection').classList.add('visible');
   document.getElementById('analyzeBtn').classList.add('visible');
 }
@@ -743,11 +797,7 @@ async function runAnalysis() {
   activateStep(0);
 
   try {
-    const labels = FRAME_LABELS[currentLang];
-
-    // Deduplicate — if same image used for all frames, only send once
-    const uniqueFrames = [...new Set(extractedFrames)].slice(0, 3);
-    const frameBase64s = uniqueFrames.map(f => {
+    const frameBase64s = extractedFrames.map(f => {
       const parts = f.split(',');
       return parts.length > 1 ? parts[1] : parts[0];
     });
@@ -759,7 +809,7 @@ async function runAnalysis() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         images: frameBase64s,
-        frameLabels: labels.slice(0, frameBase64s.length),
+        frameLabels: frameLabels,
         language: currentLang
       })
     });
@@ -797,13 +847,11 @@ async function runAnalysis() {
 }
 
 function activateStep(idx) {
-  for (let i = 0; i < 3; i++) {
-    const el = document.getElementById(`step${i}`);
-    if (!el) continue;
+  document.querySelectorAll('.loading-step').forEach((el, i) => {
     el.classList.remove('active', 'done');
     if (i < idx) el.classList.add('done');
     else if (i === idx) el.classList.add('active');
-  }
+  });
 }
 
 // ─── RESULT DISPLAY ───────────────────────────────────────────────────────────
@@ -902,7 +950,15 @@ function showError(msg) {
 
 function resetApp() {
   extractedFrames = [];
+  frameLabels = [];
   currentFile = null;
+  if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
+  videoEl = null;
+  const preview = document.getElementById('videoPreview');
+  preview.pause();
+  preview.removeAttribute('src');
+  preview.load();
+  document.getElementById('videoPreviewSection').classList.remove('visible');
   document.getElementById('framesSection').classList.remove('visible');
   document.getElementById('analyzeBtn').classList.remove('visible');
   document.getElementById('analyzeBtn').style.display = '';
