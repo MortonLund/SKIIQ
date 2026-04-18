@@ -740,21 +740,17 @@ function captureFrames(video, timestamps, url, labels) {
   captureNext();
 }
 
-// ─── MOTION CROP ──────────────────────────────────────────────────────────────
+// ─── BRIGHTNESS CROP ──────────────────────────────────────────────────────────
+// Snow is bright (>200 grayscale), skier is dark (<160). Find the dark-pixel
+// centroid in each frame independently, then smooth across neighbours.
 async function applyMotionCrop(frames) {
-  if (frames.length < 2) return frames;
+  if (frames.length === 0) return frames;
 
-  // Load all frames at reduced resolution for fast pixel comparison
   const small = await Promise.all(frames.map(f => loadFrameSmall(f, 256)));
 
-  // Compute per-frame motion centroid vs neighbours
-  const centroids = small.map((sf, i) => {
-    const prev = small[Math.max(0, i - 1)];
-    const next = small[Math.min(small.length - 1, i + 1)];
-    return getMotionCentroid(sf, prev, next);
-  });
+  const centroids = small.map(sf => getDarkCentroid(sf));
 
-  // 3-frame moving average to smooth jitter
+  // 3-frame moving average to reduce per-frame jitter
   const smoothed = centroids.map((_, i) => {
     const win = centroids.slice(Math.max(0, i - 1), i + 2);
     return {
@@ -785,28 +781,27 @@ function loadFrameSmall(dataUrl, maxSize) {
   });
 }
 
-function getMotionCentroid(cur, prev, next) {
-  const { pixels, w, h } = cur;
-  const THRESHOLD = 75; // sum of R+G+B diff per pixel
+function getDarkCentroid({ pixels, w, h }) {
+  // Weighted centroid of pixels darker than threshold (skier vs bright snow)
+  const THRESHOLD = 160;
   let sumX = 0, sumY = 0, count = 0;
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const idx = (y * w + x) * 4;
-      const diffPrev = Math.abs(pixels[idx]   - prev.pixels[idx])   +
-                       Math.abs(pixels[idx+1] - prev.pixels[idx+1]) +
-                       Math.abs(pixels[idx+2] - prev.pixels[idx+2]);
-      const diffNext = Math.abs(pixels[idx]   - next.pixels[idx])   +
-                       Math.abs(pixels[idx+1] - next.pixels[idx+1]) +
-                       Math.abs(pixels[idx+2] - next.pixels[idx+2]);
-      if (Math.max(diffPrev, diffNext) > THRESHOLD) {
-        sumX += x; sumY += y; count++;
+      // Perceptual grayscale weight
+      const brightness = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
+      if (brightness < THRESHOLD) {
+        // Weight darker pixels more heavily so the skier's body dominates
+        const weight = THRESHOLD - brightness;
+        sumX += x * weight;
+        sumY += y * weight;
+        count += weight;
       }
     }
   }
 
-  // Fallback to center if not enough motion detected
-  if (count < 20) return { x: 0.5, y: 0.5 };
+  if (count < 500) return { x: 0.5, y: 0.5 }; // not enough dark pixels — fallback to center
   return { x: (sumX / count) / w, y: (sumY / count) / h };
 }
 
