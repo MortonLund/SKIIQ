@@ -1000,187 +1000,230 @@ function detectErrorType(text) {
 
 function buildIllustration(type, lang) {
   const lbl = ILLUS_LABELS[lang] || ILLUS_LABELS.da;
-  const E = '#E8551A', C = '#27AE60';
+  const E = '#E8551A', C = '#5DADE2';
   const sb = 'stroke-linecap="round" stroke-linejoin="round" fill="none"';
-  const arrow = `<g class="ski-pulse-arrow"><line x1="133" y1="68" x2="155" y2="68" stroke="#F4C842" stroke-width="3" stroke-linecap="round"/><polygon points="155,61 169,68 155,75" fill="#F4C842"/></g>`;
-  const lbls = `<text x="65" y="133" text-anchor="middle" fill="${E}" font-size="11" font-family="system-ui,sans-serif" font-weight="600">${lbl.error}</text><text x="235" y="133" text-anchor="middle" fill="${C}" font-size="11" font-family="system-ui,sans-serif" font-weight="600">${lbl.correct}</text>`;
+
+  function j(x, y, col) {
+    return `<circle cx="${x}" cy="${y}" r="3.5" fill="${col}" stroke="none"/>`;
+  }
+  function skiLine(x1, x2, y, col) {
+    return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="4" stroke-linecap="round"/>` +
+           `<line x1="${x1+1}" y1="${y+4}" x2="${x2+1}" y2="${y+4}" stroke="${col}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>`;
+  }
+
+  const arrow = `<g class="ski-pulse-arrow"><line x1="130" y1="70" x2="153" y2="70" stroke="#F4C842" stroke-width="3.5" stroke-linecap="round"/><polygon points="153,63 170,70 153,77" fill="#F4C842"/></g>`;
+  const lbls = `<text x="65" y="138" text-anchor="middle" fill="${E}" font-size="11" font-family="system-ui,sans-serif" font-weight="600">${lbl.error}</text><text x="235" y="138" text-anchor="middle" fill="${C}" font-size="11" font-family="system-ui,sans-serif" font-weight="600">${lbl.correct}</text>`;
 
   const figs = {
+
     bagvaegt: [
-      // ERROR: body leans backward, head shifts back (left in side view)
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="56" cy="22" r="9" fill="${E}" stroke="none"/>
-        <polyline points="56,31 57,38 66,57"/>
-        <line x1="57" y1="38" x2="75" y2="50"/>
-        <line x1="57" y1="38" x2="40" y2="50"/>
-        <polyline points="66,57 65,80 65,100"/>
-        <polyline points="66,57 61,80 60,100"/>
-        <line x1="40" y1="112" x2="87" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: balanced upright stance
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="235" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="235,31 233,38 231,57"/>
-        <line x1="233" y1="38" x2="247" y2="52"/>
-        <line x1="233" y1="38" x2="219" y2="52"/>
-        <polyline points="231,57 235,80 234,100"/>
-        <polyline points="231,57 227,80 229,100"/>
-        <line x1="211" y1="112" x2="257" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: side profile — head/shoulders 20px behind feet, arm reaches forward
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="48" cy="14" r="8" fill="${E}" stroke="none"/>
+        <polyline points="48,22 51,33 57,55"/>
+        <line x1="43" y1="33" x2="60" y2="33"/>
+        <line x1="60" y1="33" x2="71" y2="47"/>
+        <line x1="43" y1="33" x2="34" y2="47"/>
+        <line x1="57" y1="55" x2="64" y2="80"/>
+        <line x1="57" y1="55" x2="59" y2="80"/>
+        <line x1="64" y1="80" x2="65" y2="103"/>
+        <line x1="59" y1="80" x2="61" y2="103"/>
+        ${j(57,55,E)}${j(64,80,E)}${j(59,80,E)}
+      </g>${skiLine(43,87,111,E)}`,
+      // CORRECT: slight forward lean, shin into boot, hip over foot
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="238" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="238,22 237,33 235,55"/>
+        <line x1="229" y1="33" x2="245" y2="33"/>
+        <line x1="245" y1="33" x2="252" y2="47"/>
+        <line x1="229" y1="33" x2="221" y2="47"/>
+        <line x1="235" y1="55" x2="239" y2="80"/>
+        <line x1="235" y1="55" x2="231" y2="80"/>
+        <line x1="239" y1="80" x2="241" y2="103"/>
+        <line x1="231" y1="80" x2="233" y2="103"/>
+        ${j(235,55,C)}${j(239,80,C)}${j(231,80,C)}
+      </g>${skiLine(218,262,111,C)}`
     ],
+
     indoverlaening: [
-      // ERROR: front view, upper body tilts right (inside of turn)
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="71" cy="21" r="9" fill="${E}" stroke="none"/>
-        <polyline points="71,30 68,38 64,60"/>
-        <line x1="55" y1="44" x2="80" y2="34"/>
-        <line x1="55" y1="44" x2="41" y2="57"/>
-        <line x1="80" y1="34" x2="91" y2="47"/>
-        <polyline points="64,60 57,83 55,100"/>
-        <polyline points="64,60 71,83 73,100"/>
-        <line x1="36" y1="112" x2="63" y2="112" stroke="${E}" stroke-width="5"/>
-        <line x1="65" y1="112" x2="92" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: upright, shoulders level
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="235" cy="21" r="9" fill="${C}" stroke="none"/>
-        <polyline points="235,30 235,38 235,60"/>
-        <line x1="222" y1="42" x2="248" y2="42"/>
-        <line x1="222" y1="42" x2="208" y2="56"/>
-        <line x1="248" y1="42" x2="262" y2="56"/>
-        <polyline points="235,60 228,83 226,100"/>
-        <polyline points="235,60 242,83 244,100"/>
-        <line x1="207" y1="112" x2="234" y2="112" stroke="${C}" stroke-width="5"/>
-        <line x1="236" y1="112" x2="263" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: front view — whole body tilts left (inside lean), inner hip drops
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="57" cy="13" r="8" fill="${E}" stroke="none"/>
+        <polyline points="57,21 60,31 64,53"/>
+        <line x1="47" y1="25" x2="73" y2="21"/>
+        <line x1="47" y1="25" x2="35" y2="39"/>
+        <line x1="73" y1="21" x2="83" y2="35"/>
+        <line x1="57" y1="53" x2="52" y2="79"/>
+        <line x1="71" y1="51" x2="75" y2="77"/>
+        <line x1="52" y1="79" x2="50" y2="103"/>
+        <line x1="75" y1="77" x2="76" y2="103"/>
+        ${j(57,53,E)}${j(71,51,E)}${j(52,79,E)}${j(75,77,E)}
+      </g>${skiLine(30,60,111,E)}${skiLine(64,96,111,E)}`,
+      // CORRECT: upright over outer ski, angle between body and legs
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="13" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,21 235,31 235,53"/>
+        <line x1="221" y1="35" x2="249" y2="35"/>
+        <line x1="221" y1="35" x2="209" y2="49"/>
+        <line x1="249" y1="35" x2="261" y2="49"/>
+        <line x1="226" y1="55" x2="222" y2="80"/>
+        <line x1="244" y1="53" x2="248" y2="78"/>
+        <line x1="222" y1="80" x2="220" y2="103"/>
+        <line x1="248" y1="78" x2="250" y2="103"/>
+        ${j(226,55,C)}${j(244,53,C)}${j(222,80,C)}${j(248,78,C)}
+      </g>${skiLine(199,230,111,C)}${skiLine(238,270,111,C)}`
     ],
+
     overkropsrotation: [
-      // ERROR: 3/4 view, right shoulder way forward, left way back
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="66" cy="22" r="9" fill="${E}" stroke="none"/>
-        <polyline points="66,31 65,60"/>
-        <line x1="51" y1="46" x2="79" y2="35"/>
-        <line x1="51" y1="46" x2="38" y2="59"/>
-        <line x1="79" y1="35" x2="92" y2="48"/>
-        <polyline points="65,60 58,83 56,100"/>
-        <polyline points="65,60 72,83 74,100"/>
-        <line x1="37" y1="112" x2="64" y2="112" stroke="${E}" stroke-width="5"/>
-        <line x1="66" y1="112" x2="93" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: shoulders square, facing valley
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="235" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="235,31 235,60"/>
-        <line x1="221" y1="41" x2="249" y2="41"/>
-        <line x1="221" y1="41" x2="207" y2="55"/>
-        <line x1="249" y1="41" x2="263" y2="55"/>
-        <polyline points="235,60 228,83 226,100"/>
-        <polyline points="235,60 242,83 244,100"/>
-        <line x1="207" y1="112" x2="234" y2="112" stroke="${C}" stroke-width="5"/>
-        <line x1="236" y1="112" x2="263" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: front view — outside shoulder swings far forward, inside shoulder behind
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="65" cy="14" r="8" fill="${E}" stroke="none"/>
+        <polyline points="65,22 65,31 65,53"/>
+        <line x1="50" y1="43" x2="80" y2="22"/>
+        <line x1="50" y1="43" x2="36" y2="56"/>
+        <line x1="80" y1="22" x2="92" y2="35"/>
+        <line x1="65" y1="53" x2="57" y2="79"/>
+        <line x1="65" y1="53" x2="73" y2="79"/>
+        <line x1="57" y1="79" x2="55" y2="103"/>
+        <line x1="73" y1="79" x2="75" y2="103"/>
+        ${j(65,53,E)}${j(57,79,E)}${j(73,79,E)}
+      </g>${skiLine(35,65,111,E)}${skiLine(66,96,111,E)}`,
+      // CORRECT: shoulders square and level, stable upper body
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,22 235,31 235,53"/>
+        <line x1="221" y1="36" x2="249" y2="36"/>
+        <line x1="221" y1="36" x2="208" y2="50"/>
+        <line x1="249" y1="36" x2="262" y2="50"/>
+        <line x1="235" y1="53" x2="227" y2="79"/>
+        <line x1="235" y1="53" x2="243" y2="79"/>
+        <line x1="227" y1="79" x2="225" y2="103"/>
+        <line x1="243" y1="79" x2="245" y2="103"/>
+        ${j(235,53,C)}${j(227,79,C)}${j(243,79,C)}
+      </g>${skiLine(204,234,111,C)}${skiLine(236,266,111,C)}`
     ],
+
     hofterotation: [
-      // ERROR: front view, hip line strongly rotated (right hip forward)
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="65" cy="22" r="9" fill="${E}" stroke="none"/>
-        <polyline points="65,31 65,57"/>
-        <line x1="52" y1="40" x2="78" y2="40"/>
-        <line x1="52" y1="40" x2="38" y2="54"/>
-        <line x1="78" y1="40" x2="92" y2="54"/>
-        <line x1="51" y1="63" x2="77" y2="55"/>
-        <polyline points="77,55 76,83 74,100"/>
-        <polyline points="51,63 54,83 57,100"/>
-        <line x1="37" y1="112" x2="65" y2="112" stroke="${E}" stroke-width="5"/>
-        <line x1="56" y1="112" x2="94" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: level horizontal hip line, stable
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="235" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="235,31 235,60"/>
-        <line x1="222" y1="40" x2="248" y2="40"/>
-        <line x1="222" y1="40" x2="208" y2="54"/>
-        <line x1="248" y1="40" x2="262" y2="54"/>
-        <line x1="224" y1="60" x2="246" y2="60"/>
-        <polyline points="224,60 224,83 224,100"/>
-        <polyline points="246,60 246,83 246,100"/>
-        <line x1="205" y1="112" x2="232" y2="112" stroke="${C}" stroke-width="5"/>
-        <line x1="238" y1="112" x2="265" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: front view — hip line rotated (right hip far forward), shoulders stable
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="65" cy="14" r="8" fill="${E}" stroke="none"/>
+        <polyline points="65,22 65,31 65,53"/>
+        <line x1="52" y1="35" x2="78" y2="35"/>
+        <line x1="52" y1="35" x2="38" y2="49"/>
+        <line x1="78" y1="35" x2="91" y2="49"/>
+        <line x1="77" y1="53" x2="51" y2="63"/>
+        <line x1="51" y1="63" x2="53" y2="85"/>
+        <line x1="77" y1="53" x2="76" y2="82"/>
+        <line x1="53" y1="85" x2="51" y2="103"/>
+        <line x1="76" y1="82" x2="76" y2="103"/>
+        ${j(65,53,E)}${j(77,53,E)}${j(51,63,E)}${j(53,85,E)}${j(76,82,E)}
+      </g>${skiLine(32,62,111,E)}${skiLine(65,97,111,E)}`,
+      // CORRECT: hip line level and stable, legs steer freely under body
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,22 235,31 235,53"/>
+        <line x1="222" y1="35" x2="248" y2="35"/>
+        <line x1="222" y1="35" x2="208" y2="49"/>
+        <line x1="248" y1="35" x2="261" y2="49"/>
+        <line x1="224" y1="57" x2="246" y2="57"/>
+        <line x1="224" y1="57" x2="223" y2="81"/>
+        <line x1="246" y1="57" x2="247" y2="81"/>
+        <line x1="223" y1="81" x2="222" y2="103"/>
+        <line x1="247" y1="81" x2="248" y2="103"/>
+        ${j(235,53,C)}${j(224,57,C)}${j(246,57,C)}${j(223,81,C)}${j(247,81,C)}
+      </g>${skiLine(201,231,111,C)}${skiLine(237,267,111,C)}`
     ],
+
     skridtstilling: [
-      // ERROR: side view, one ski way forward, one way back
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="63" cy="22" r="9" fill="${E}" stroke="none"/>
-        <polyline points="63,31 63,38 64,57"/>
-        <line x1="63" y1="38" x2="76" y2="51"/>
-        <line x1="63" y1="38" x2="50" y2="51"/>
-        <polyline points="64,57 74,80 77,100"/>
-        <polyline points="64,57 52,80 47,100"/>
-        <line x1="55" y1="112" x2="100" y2="112" stroke="${E}" stroke-width="5"/>
-        <line x1="20" y1="112" x2="63" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: side view, ski tips nearly level
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="234" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="234,31 233,38 233,57"/>
-        <line x1="233" y1="38" x2="247" y2="51"/>
-        <line x1="233" y1="38" x2="219" y2="51"/>
-        <polyline points="233,57 237,80 237,100"/>
-        <polyline points="233,57 229,80 230,100"/>
-        <line x1="215" y1="112" x2="259" y2="112" stroke="${C}" stroke-width="5"/>
-        <line x1="208" y1="112" x2="252" y2="112" stroke="${C}" stroke-width="5" opacity="0.55"/>
-      </g>`
+      // ERROR: side view — right foot way forward, left foot way back (33px stagger)
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="64" cy="14" r="8" fill="${E}" stroke="none"/>
+        <polyline points="64,22 64,31 64,53"/>
+        <line x1="56" y1="35" x2="72" y2="35"/>
+        <line x1="56" y1="35" x2="45" y2="49"/>
+        <line x1="72" y1="35" x2="83" y2="49"/>
+        <line x1="64" y1="53" x2="73" y2="79"/>
+        <line x1="64" y1="53" x2="52" y2="79"/>
+        <line x1="73" y1="79" x2="77" y2="103"/>
+        <line x1="52" y1="79" x2="44" y2="103"/>
+        ${j(64,53,E)}${j(73,79,E)}${j(52,79,E)}
+      </g>${skiLine(55,103,111,E)}${skiLine(17,61,111,E)}`,
+      // CORRECT: side view — ski tips nearly level, balanced parallel stance
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,22 235,31 235,53"/>
+        <line x1="227" y1="35" x2="243" y2="35"/>
+        <line x1="227" y1="35" x2="217" y2="49"/>
+        <line x1="243" y1="35" x2="253" y2="49"/>
+        <line x1="235" y1="53" x2="239" y2="79"/>
+        <line x1="235" y1="53" x2="231" y2="79"/>
+        <line x1="239" y1="79" x2="241" y2="103"/>
+        <line x1="231" y1="79" x2="230" y2="103"/>
+        ${j(235,53,C)}${j(239,79,C)}${j(231,79,C)}
+      </g>${skiLine(216,261,111,C)}<line x1="212" y1="111" x2="257" y2="111" stroke="${C}" stroke-width="4" stroke-linecap="round" opacity="0.45"/><line x1="213" y1="115" x2="258" y2="115" stroke="${C}" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>`
     ],
+
     stiveskiled: [
-      // ERROR: side view, perfectly straight rigid legs (no knee bend)
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="64" cy="22" r="9" fill="${E}" stroke="none"/>
-        <line x1="64" y1="31" x2="64" y2="57"/>
-        <line x1="64" y1="38" x2="78" y2="51"/>
-        <line x1="64" y1="38" x2="50" y2="51"/>
-        <line x1="64" y1="57" x2="64" y2="100"/>
-        <line x1="64" y1="57" x2="60" y2="100"/>
-        <line x1="41" y1="112" x2="87" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: side view, active bent joints (clear knee angle)
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="233" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="233,31 231,38 229,57"/>
-        <line x1="231" y1="38" x2="245" y2="52"/>
-        <line x1="231" y1="38" x2="217" y2="52"/>
-        <polyline points="229,57 238,80 234,100"/>
-        <polyline points="229,57 223,80 226,100"/>
-        <line x1="210" y1="112" x2="256" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: side view — perfectly straight rigid legs, no knee angle at all
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="64" cy="14" r="8" fill="${E}" stroke="none"/>
+        <line x1="64" y1="22" x2="64" y2="53"/>
+        <line x1="56" y1="35" x2="72" y2="35"/>
+        <line x1="56" y1="35" x2="44" y2="49"/>
+        <line x1="72" y1="35" x2="84" y2="49"/>
+        <line x1="64" y1="53" x2="67" y2="103"/>
+        <line x1="64" y1="53" x2="61" y2="103"/>
+        ${j(64,53,E)}
+      </g>${skiLine(42,89,111,E)}`,
+      // CORRECT: clear knee and ankle bend, ready to absorb terrain
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,22 234,31 232,53"/>
+        <line x1="226" y1="35" x2="242" y2="35"/>
+        <line x1="226" y1="35" x2="215" y2="49"/>
+        <line x1="242" y1="35" x2="253" y2="49"/>
+        <line x1="232" y1="53" x2="241" y2="79"/>
+        <line x1="232" y1="53" x2="225" y2="79"/>
+        <line x1="241" y1="79" x2="238" y2="103"/>
+        <line x1="225" y1="79" x2="228" y2="103"/>
+        ${j(232,53,C)}${j(241,79,C)}${j(225,79,C)}
+      </g>${skiLine(214,260,111,C)}`
     ],
+
     boejeforhold: [
-      // ERROR: side view, upright torso + knees pushed way forward (knæforvægt)
-      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.5" ${sb}>
-        <circle cx="64" cy="22" r="9" fill="${E}" stroke="none"/>
-        <line x1="64" y1="31" x2="64" y2="57"/>
-        <line x1="64" y1="38" x2="78" y2="51"/>
-        <line x1="64" y1="38" x2="50" y2="51"/>
-        <polyline points="64,57 81,80 64,100"/>
-        <polyline points="64,57 72,79 57,100"/>
-        <line x1="41" y1="112" x2="87" y2="112" stroke="${E}" stroke-width="5"/>
-      </g>`,
-      // CORRECT: balanced flex — shin forward, natural joint angles
-      `<g stroke="${C}" stroke-width="3.5" ${sb}>
-        <circle cx="233" cy="22" r="9" fill="${C}" stroke="none"/>
-        <polyline points="233,31 230,38 228,57"/>
-        <line x1="230" y1="38" x2="244" y2="52"/>
-        <line x1="230" y1="38" x2="216" y2="52"/>
-        <polyline points="228,57 235,80 233,100"/>
-        <polyline points="228,57 223,80 226,100"/>
-        <line x1="210" y1="112" x2="256" y2="112" stroke="${C}" stroke-width="5"/>
-      </g>`
+      // ERROR: side view — upright torso + knees pushed far forward (knæforvægt)
+      `<g class="ski-error-fig" stroke="${E}" stroke-width="3.2" ${sb}>
+        <circle cx="62" cy="14" r="8" fill="${E}" stroke="none"/>
+        <line x1="62" y1="22" x2="62" y2="53"/>
+        <line x1="54" y1="35" x2="70" y2="35"/>
+        <line x1="54" y1="35" x2="43" y2="49"/>
+        <line x1="70" y1="35" x2="81" y2="49"/>
+        <line x1="62" y1="53" x2="77" y2="79"/>
+        <line x1="62" y1="53" x2="69" y2="79"/>
+        <line x1="77" y1="79" x2="61" y2="103"/>
+        <line x1="69" y1="79" x2="54" y2="103"/>
+        ${j(62,53,E)}${j(77,79,E)}${j(69,79,E)}
+      </g>${skiLine(39,86,111,E)}`,
+      // CORRECT: balanced flex — shin forward, hip back, all joints working together
+      `<g stroke="${C}" stroke-width="3.2" ${sb}>
+        <circle cx="235" cy="14" r="8" fill="${C}" stroke="none"/>
+        <polyline points="235,22 234,31 232,53"/>
+        <line x1="225" y1="35" x2="242" y2="35"/>
+        <line x1="225" y1="35" x2="214" y2="49"/>
+        <line x1="242" y1="35" x2="253" y2="49"/>
+        <line x1="232" y1="53" x2="239" y2="79"/>
+        <line x1="232" y1="53" x2="226" y2="79"/>
+        <line x1="239" y1="79" x2="238" y2="103"/>
+        <line x1="226" y1="79" x2="227" y2="103"/>
+        ${j(232,53,C)}${j(239,79,C)}${j(226,79,C)}
+      </g>${skiLine(213,260,111,C)}`
     ]
+
   };
 
   const pair = figs[type];
   if (!pair) return '';
-  return `<svg viewBox="0 0 300 138" xmlns="http://www.w3.org/2000/svg">${pair[0]}${arrow}${pair[1]}${lbls}</svg>`;
+  return `<svg viewBox="0 0 300 142" xmlns="http://www.w3.org/2000/svg">${pair[0]}${arrow}${pair[1]}${lbls}</svg>`;
 }
 
 // ─── RESULT DISPLAY ───────────────────────────────────────────────────────────
