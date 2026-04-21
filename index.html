@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkiIQ — Film dine sving. Få feedback på 30 sekunder.</title>
+<title>SkiIQ — Film your turns. Get feedback in 30 seconds.</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -96,6 +96,18 @@
     font-weight: 600;
   }
 
+  /* UPLOAD TIP */
+  .upload-tip {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(93,173,226,0.06);
+    border: 1px solid rgba(93,173,226,0.12);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
   /* UPLOAD ZONE */
   .upload-zone {
     border: 1.5px dashed rgba(93,173,226,0.3);
@@ -135,23 +147,6 @@
     line-height: 1.5;
   }
 
-  /* FRAMES PREVIEW */
-  .frames-section {
-    margin-top: 24px;
-    display: none;
-  }
-  .frames-section.visible { display: block; }
-
-  .section-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
   /* VIDEO PREVIEW */
   .video-preview-section {
     margin-top: 20px;
@@ -167,6 +162,47 @@
     max-height: 340px;
     object-fit: contain;
   }
+
+  /* CUSTOM SLIDER */
+  .start-point-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .start-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(93,173,226,0.25);
+    outline: none;
+    cursor: pointer;
+  }
+  .start-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--frost);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(93,173,226,0.5);
+  }
+  .start-slider::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--frost);
+    cursor: pointer;
+    border: none;
+  }
+  .start-time-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--frost);
+    min-width: 40px;
+    text-align: right;
+  }
+
   .mark-btn {
     width: 100%;
     padding: 16px;
@@ -183,45 +219,15 @@
   }
   .mark-btn:hover { background: rgba(93,173,226,0.22); }
 
-  .frames-grid {
-    display: grid;
-    gap: 6px;
-  }
-
-  .frame-item {
-    position: relative;
-    aspect-ratio: 9/16;
-    border-radius: 10px;
-    overflow: hidden;
-    background: rgba(93,173,226,0.05);
-    border: 1px solid rgba(93,173,226,0.1);
-  }
-  .frame-item img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
-  .frame-label {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(13,43,62,0.9));
-    padding: 4px 4px 5px;
-    font-size: 7px;
-    font-weight: 600;
-    text-align: center;
-    color: var(--frost);
-    letter-spacing: 0.3px;
-    line-height: 1.2;
-  }
-  .frame-loading {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .spinner-small {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(93,173,226,0.2);
-    border-top-color: var(--frost);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
   }
 
   /* ANALYZE BUTTON */
@@ -408,7 +414,7 @@
     line-height: 1.4;
   }
 
-  /* FRAME CANVAS OVERLAY */
+  /* BEST FRAME IMAGE */
   .result-frame-wrap {
     margin-bottom: 16px;
     border-radius: 12px;
@@ -421,6 +427,35 @@
     height: auto;
     display: block;
     margin: 0 auto;
+  }
+
+  /* TECHNICAL EXPLANATION BUTTON */
+  .tech-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid rgba(93,173,226,0.25);
+    background: rgba(93,173,226,0.07);
+    color: var(--frost);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+  .tech-btn:hover { background: rgba(93,173,226,0.14); }
+  .tech-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .tech-explanation {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(93,173,226,0.05);
+    border: 1px solid rgba(93,173,226,0.12);
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(247,250,251,0.82);
   }
 
   /* NEW ANALYSIS BUTTON */
@@ -463,48 +498,48 @@
 <div class="container">
   <header>
     <div class="logo">Ski<span>IQ</span></div>
-    <div class="tagline">Film dine sving — få feedback på 30 sekunder</div>
+    <div class="tagline">Film your turns — get feedback in 30 seconds</div>
   </header>
 
   <!-- Language -->
   <div class="lang-row">
-    <button class="lang-btn active" onclick="setLang('da', this)">🇩🇰 Dansk</button>
-    <button class="lang-btn" onclick="setLang('en', this)">🇬🇧 English</button>
+    <button class="lang-btn active" onclick="setLang('en', this)">🇬🇧 English</button>
     <button class="lang-btn" onclick="setLang('zh', this)">🇨🇳 中文</button>
   </div>
+
+  <!-- Upload tip -->
+  <div class="upload-tip" id="uploadTip"></div>
 
   <!-- Upload -->
   <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
        ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
     <input type="file" id="fileInput" accept="video/*,image/*" onchange="handleFile(event)">
     <div class="upload-icon">🎿</div>
-    <div class="upload-title" id="uploadTitle">Upload video eller billede</div>
-    <div class="upload-sub" id="uploadSub">Optag et sving på pisten og upload det her.<br>Video eller billede accepteres.</div>
+    <div class="upload-title" id="uploadTitle">Upload video or image</div>
+    <div class="upload-sub" id="uploadSub">Record a run and upload it here.<br>Video or image accepted.</div>
   </div>
 
-  <!-- Video preview + mark button -->
+  <!-- Video preview + custom slider + mark button -->
   <div class="video-preview-section" id="videoPreviewSection">
-    <div class="section-label" id="videoPreviewLabel">Spol til svinget starter</div>
+    <div class="section-label" id="videoPreviewLabel">Drag to set start point</div>
     <video id="videoPreview" controls playsinline muted></video>
-    <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Vælg start på analyse</button>
-  </div>
-
-  <!-- Frames -->
-  <div class="frames-section" id="framesSection">
-    <div class="section-label" id="framesLabel">3 frames udtrukket</div>
-    <div class="frames-grid" id="framesGrid"></div>
+    <div class="start-point-wrap">
+      <input type="range" class="start-slider" id="startSlider" min="0" max="100" step="0.1" value="0" oninput="onSliderInput(this.value)">
+      <div class="start-time-display" id="startTimeDisplay">0:00</div>
+    </div>
+    <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Start analysis from here</button>
   </div>
 
   <!-- Analyze button -->
   <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
-    <span>🔍</span> <span id="analyzeBtnText">Analysér mit skiløb</span>
+    <span>🔍</span> <span id="analyzeBtnText">Analyse my skiing</span>
   </button>
 
   <!-- Loading -->
   <div class="loading-state" id="loadingState">
     <div class="loading-ring"></div>
-    <div class="loading-text" id="loadingTitle">Analyserer dit skiløb...</div>
-    <div class="loading-sub" id="loadingSub">AI skiinstruktør er i gang</div>
+    <div class="loading-text" id="loadingTitle">Analysing your skiing...</div>
+    <div class="loading-sub" id="loadingSub">AI ski instructor is working</div>
     <div class="loading-steps" id="loadingSteps"></div>
   </div>
 
@@ -516,35 +551,37 @@
     <div class="result-header">
       <div class="result-icon">🎿</div>
       <div>
-        <div class="result-title" id="resultTitle">Din skianalyse</div>
-        <div class="result-subtitle" id="resultSubtitle">Baseret på 5 frames · Den Danske Skiskole</div>
+        <div class="result-title" id="resultTitle">Your ski analysis</div>
+        <div class="result-subtitle" id="resultSubtitle">PSIA analysis</div>
       </div>
     </div>
     <div class="result-body" id="resultBody"></div>
   </div>
 
   <!-- New analysis -->
-  <button class="new-btn" id="newBtn" onclick="resetApp()">↩ Ny analyse</button>
+  <button class="new-btn" id="newBtn" onclick="resetApp()">↩ New analysis</button>
 
 </div>
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
-let currentLang = 'da';
+let currentLang = 'en';
 let extractedFrames = [];
 let frameLabels = [];
 let currentFile = null;
 let videoEl = null;
 let videoUrl = null;
 let cropGeneration = 0;
+let startPointTime = 0;
+let lastAnalysisSkill = '';
 
 const UI_TEXT = {
   da: {
+    uploadTip: 'Tip: Film fra fronten eller siden. Lange sving giver den bedste analyse. Korte sving kan være svære for SkiIQ at analysere præcist. Film flere gange fra forskellige vinkler for bedst resultat.',
     uploadTitle: 'Upload video eller billede',
-    uploadSub: 'Træk og start videoen derfra, hvor du vil starte analysen. Analysen sker på 1-2 sving derefter.',
-    videoLabel: 'Spol til svinget starter',
-    markBtn: '▶ Vælg start på analyse',
-    framesLabel: '{{n}} frames udtrukket',
+    uploadSub: 'Træk skyderen til det sted, du vil starte analysen. Analysen sker på 1-2 sving derefter.',
+    videoLabel: 'Træk skyderen til svinget starter',
+    markBtn: '▶ Start analyse herfra',
     analyzeBtn: 'Analysér mit skiløb',
     loadingTitle: 'Analyserer dit skiløb...',
     loadingSub: 'AI skiinstruktør er i gang',
@@ -556,13 +593,15 @@ const UI_TEXT = {
     labelFocus: '→ Skill fokus',
     labelExercise: '⬤ Prøv dette',
     labelQuote: '💬 Mærk dette',
+    techBtn: '📖 Læs den tekniske forklaring',
+    techLoading: 'Henter...',
   },
   en: {
+    uploadTip: 'Tip: Film from the front or side. Long turns give the best analysis. Short turns can be difficult for SkiIQ to analyse accurately. Film multiple times from different angles for best results.',
     uploadTitle: 'Upload video or image',
-    uploadSub: 'Scrub the video to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
-    videoLabel: 'Scrub to where the turn starts',
-    markBtn: '▶ Select start of analysis',
-    framesLabel: '{{n}} frames extracted',
+    uploadSub: 'Drag the slider to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
+    videoLabel: 'Drag to set start point',
+    markBtn: '▶ Start analysis from here',
     analyzeBtn: 'Analyse my skiing',
     loadingTitle: 'Analysing your skiing...',
     loadingSub: 'AI ski instructor is working',
@@ -574,13 +613,15 @@ const UI_TEXT = {
     labelFocus: '→ Skill focus',
     labelExercise: '⬤ Try this',
     labelQuote: '💬 Feel this',
+    techBtn: '📖 Read the technical explanation',
+    techLoading: 'Loading...',
   },
   zh: {
+    uploadTip: '提示：从正面或侧面拍摄。长弯道可提供最佳分析。短弯道可能难以准确分析。建议从不同角度多次拍摄。',
     uploadTitle: '上传视频或图片',
-    uploadSub: '拖动视频进度条到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
-    videoLabel: '拖动到转弯开始处',
-    markBtn: '▶ 选择分析起点',
-    framesLabel: '已提取{{n}}帧',
+    uploadSub: '拖动滑块到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
+    videoLabel: '拖动设置起始点',
+    markBtn: '▶ 从此处开始分析',
     analyzeBtn: '分析我的滑雪',
     loadingTitle: '正在分析您的滑雪...',
     loadingSub: 'AI滑雪教练正在分析',
@@ -592,6 +633,8 @@ const UI_TEXT = {
     labelFocus: '→ 技术重点',
     labelExercise: '⬤ 尝试这个',
     labelQuote: '💬 感受这个',
+    techBtn: '📖 阅读技术说明',
+    techLoading: '加载中...',
   }
 };
 
@@ -601,12 +644,19 @@ function setLang(lang, btn) {
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const t = UI_TEXT[lang];
+  document.getElementById('uploadTip').textContent = t.uploadTip;
   document.getElementById('uploadTitle').textContent = t.uploadTitle;
   document.getElementById('uploadSub').textContent = t.uploadSub;
   document.getElementById('analyzeBtnText').textContent = t.analyzeBtn;
   document.getElementById('videoPreviewLabel').textContent = t.videoLabel;
   document.getElementById('markBtn').textContent = t.markBtn;
 }
+
+// Init default language on load
+(function() {
+  const t = UI_TEXT[currentLang];
+  document.getElementById('uploadTip').textContent = t.uploadTip;
+})();
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
 function handleDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('dragover'); }
@@ -652,12 +702,12 @@ function resizeImageToBase64(dataUrl, maxWidth, maxHeight, callback) {
 }
 
 function extractFramesFromImage(file) {
-  showFramesLoading(1);
   const reader = new FileReader();
   reader.onload = (e) => {
     resizeImageToBase64(e.target.result, 1024, 1024, (resized) => {
       extractedFrames = [resized];
-      showFrames(extractedFrames, ['Billede']);
+      frameLabels = ['Image'];
+      document.getElementById('analyzeBtn').classList.add('visible');
     });
   };
   reader.readAsDataURL(file);
@@ -671,12 +721,19 @@ function extractFramesFromVideo(file) {
   const timeout = setTimeout(() => {
     URL.revokeObjectURL(url);
     videoUrl = null;
-    showError('Video kunne ikke læses. Prøv at uploade et billede i stedet.');
+    showError('Video could not be read. Try uploading an image instead.');
   }, 10000);
 
   preview.onloadeddata = () => {
     clearTimeout(timeout);
     videoEl = preview;
+    startPointTime = 0;
+    const slider = document.getElementById('startSlider');
+    slider.min = 0;
+    slider.max = preview.duration || 60;
+    slider.step = 0.1;
+    slider.value = 0;
+    document.getElementById('startTimeDisplay').textContent = '0:00';
     document.getElementById('videoPreviewSection').classList.add('visible');
   };
 
@@ -684,26 +741,37 @@ function extractFramesFromVideo(file) {
     clearTimeout(timeout);
     URL.revokeObjectURL(url);
     videoUrl = null;
-    showError('Video kunne ikke læses. Prøv at uploade et billede i stedet.');
+    showError('Video could not be read. Try uploading an image instead.');
   };
 
   preview.src = url;
   preview.load();
 }
 
+function onSliderInput(val) {
+  if (!videoEl) return;
+  const time = parseFloat(val);
+  startPointTime = time;
+  videoEl.currentTime = time;
+  document.getElementById('startTimeDisplay').textContent = formatTime(time);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
 function markTurnStart() {
   if (!videoEl) return;
 
-  const startTime = videoEl.currentTime;
+  const startTime = startPointTime;
   const duration = videoEl.duration || Infinity;
 
   document.getElementById('videoPreviewSection').classList.remove('visible');
 
-  // Clear any frames from a previous analysis before showing new ones
   extractedFrames = [];
   frameLabels = [];
-  document.getElementById('framesGrid').innerHTML = '';
-  document.getElementById('framesSection').classList.remove('visible');
   document.getElementById('analyzeBtn').classList.remove('visible');
 
   const offsets = [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
@@ -712,7 +780,6 @@ function markTurnStart() {
   const labels = validOffsets.map(o => `+${o.toFixed(2)}s`);
 
   const gen = ++cropGeneration;
-  showFramesLoading(timestamps.length);
   captureFrames(videoEl, timestamps, videoUrl, labels, gen);
 }
 
@@ -729,14 +796,15 @@ function captureFrames(video, timestamps, url, labels, gen) {
       videoUrl = null;
       videoEl = null;
       if (frames.length === 0) {
-        showError('Kunne ikke udtrække frames. Prøv et billede i stedet.');
+        showError('Could not extract frames. Try uploading an image instead.');
         resetApp();
         return;
       }
       applyMotionCrop(frames).then(cropped => {
-        if (gen !== cropGeneration) return; // reset happened — discard
+        if (gen !== cropGeneration) return;
         extractedFrames = cropped;
-        showFrames(cropped, (labels || []).slice(0, cropped.length));
+        frameLabels = (labels || []).slice(0, cropped.length);
+        document.getElementById('analyzeBtn').classList.add('visible');
       });
       return;
     }
@@ -765,16 +833,12 @@ function captureFrames(video, timestamps, url, labels, gen) {
 }
 
 // ─── BRIGHTNESS CROP ──────────────────────────────────────────────────────────
-// Snow is bright (>200 grayscale), skier is dark (<160). Find the dark-pixel
-// centroid in each frame independently, then smooth across neighbours.
 async function applyMotionCrop(frames) {
   if (frames.length === 0) return frames;
 
   const small = await Promise.all(frames.map(f => loadFrameSmall(f, 256)));
-
   const centroids = small.map(sf => getDarkCentroid(sf));
 
-  // 3-frame moving average to reduce per-frame jitter
   const smoothed = centroids.map((_, i) => {
     const win = centroids.slice(Math.max(0, i - 1), i + 2);
     return {
@@ -806,7 +870,6 @@ function loadFrameSmall(dataUrl, maxSize) {
 }
 
 function getDarkCentroid({ pixels, w, h }) {
-  // Lower threshold: only pick up truly dark things (clothes, skis, not shadows)
   const THRESHOLD = 130;
   let sumX = 0, sumY = 0, total = 0;
 
@@ -816,13 +879,9 @@ function getDarkCentroid({ pixels, w, h }) {
       const brightness = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
       if (brightness < THRESHOLD) {
         const darkness = THRESHOLD - brightness;
-
-        // Gaussian weight centred on image midpoint — suppresses trees/mountains at edges
-        // exp factor 6: edge pixels get ~5% of the weight of centre pixels
         const dx = x / w - 0.5;
         const dy = y / h - 0.5;
         const centerWeight = Math.exp(-(dx * dx + dy * dy) * 6);
-
         const weight = darkness * centerWeight;
         sumX += x * weight;
         sumY += y * weight;
@@ -857,42 +916,6 @@ function cropToCentroid(dataUrl, cx, cy) {
   });
 }
 
-function showFramesLoading(count) {
-  const grid = document.getElementById('framesGrid');
-  grid.innerHTML = '';
-  grid.style.gridTemplateColumns = `repeat(${count}, 1fr)`;
-  for (let i = 0; i < count; i++) {
-    const item = document.createElement('div');
-    item.className = 'frame-item';
-    item.innerHTML = '<div class="frame-loading"><div class="spinner-small"></div></div>';
-    grid.appendChild(item);
-  }
-  document.getElementById('framesSection').classList.add('visible');
-}
-
-function showFrames(frames, labels) {
-  const t = UI_TEXT[currentLang];
-  const grid = document.getElementById('framesGrid');
-  grid.innerHTML = '';
-  const cols = Math.min(frames.length, 3);
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  frameLabels = labels || [];
-
-  frames.forEach((src, i) => {
-    const item = document.createElement('div');
-    item.className = 'frame-item';
-    item.innerHTML = `
-      <img src="${src}" alt="Frame ${i+1}">
-      <div class="frame-label">${frameLabels[i] || ''}</div>
-    `;
-    grid.appendChild(item);
-  });
-
-  document.getElementById('framesLabel').textContent = t.framesLabel.replace('{{n}}', frames.length);
-  document.getElementById('framesSection').classList.add('visible');
-  document.getElementById('analyzeBtn').classList.add('visible');
-}
-
 // ─── ANALYSIS ─────────────────────────────────────────────────────────────────
 async function runAnalysis() {
   const t = UI_TEXT[currentLang];
@@ -906,13 +929,11 @@ async function runAnalysis() {
   document.getElementById('loadingTitle').textContent = t.loadingTitle;
   document.getElementById('loadingSub').textContent = t.loadingSub;
 
-  // Build loading steps UI
   const stepsEl = document.getElementById('loadingSteps');
   stepsEl.innerHTML = t.steps.map((s, i) =>
     `<div class="loading-step" id="step${i}"><div class="step-dot"></div><span>${s}</span></div>`
   ).join('');
 
-  // Activate steps progressively
   activateStep(0);
 
   try {
@@ -939,19 +960,18 @@ async function runAnalysis() {
     try {
       respData = await response.json();
     } catch(e) {
-      throw new Error('JSON parse fejl: ' + e.message);
+      throw new Error('JSON parse error: ' + e.message);
     }
 
     if (!response.ok) {
-      const errMsg = respData?.error?.message || respData?.error || 'Ukendt API fejl';
+      const errMsg = respData?.error?.message || respData?.error || 'Unknown API error';
       throw new Error(`API ${response.status}: ${errMsg}`);
     }
 
     activateStep(3);
 
     const text = (respData.text || '').trim();
-
-    if (!text) throw new Error('Tomt svar. Debug: ' + JSON.stringify(respData).substring(0, 200));
+    if (!text) throw new Error('Empty response. Debug: ' + JSON.stringify(respData).substring(0, 200));
 
     setTimeout(() => {
       loadingState.classList.remove('visible');
@@ -960,7 +980,7 @@ async function runAnalysis() {
 
   } catch (err) {
     loadingState.classList.remove('visible');
-    showError(err.message || 'Ukendt fejl');
+    showError(err.message || 'Unknown error');
     document.getElementById('analyzeBtn').style.display = 'flex';
   }
 }
@@ -973,8 +993,6 @@ function activateStep(idx) {
   });
 }
 
-
-
 // ─── RESULT DISPLAY ───────────────────────────────────────────────────────────
 function showResult(data) {
   const text = data.text || '';
@@ -985,7 +1003,7 @@ function showResult(data) {
   const body = document.getElementById('resultBody');
   body.innerHTML = '';
 
-  // A) Best frame canvas with coaching overlay
+  // Best frame image (no overlay)
   if (data.bestFrameImage) {
     const wrap = document.createElement('div');
     wrap.className = 'result-frame-wrap';
@@ -993,10 +1011,10 @@ function showResult(data) {
     canvas.className = 'result-frame-canvas';
     wrap.appendChild(canvas);
     body.appendChild(wrap);
-    drawFrameWithOverlay(canvas, data.bestFrameImage, data.overlayInstructions || '');
+    drawBestFrame(canvas, data.bestFrameImage);
   }
 
-  // B) Parse text sections
+  // Parse text sections
   const sections = [
     {
       keys: ['✓ WHAT I SEE:', '✓ HVAD JEG SER:', '✓ 我看到的:'],
@@ -1037,6 +1055,18 @@ function showResult(data) {
     const content = text.substring(contentStart, contentEnd).trim();
     if (!content) return;
 
+    // Extract skill name from SKILL FOCUS section
+    if (section.keys.includes('→ SKILL FOCUS:') || section.keys.includes('→ SKILL FOKUS:') || section.keys.includes('→ 技术重点:')) {
+      const skillNames = ['Rotational Control', 'Edge Control', 'Pressure Control', 'Balance', '旋转控制', '刃角控制', '压力控制', '平衡'];
+      for (const s of skillNames) {
+        if (content.toLowerCase().includes(s.toLowerCase())) {
+          lastAnalysisSkill = s;
+          break;
+        }
+      }
+      if (!lastAnalysisSkill) lastAnalysisSkill = content.split('\n')[0].trim().substring(0, 60);
+    }
+
     const div = document.createElement('div');
     div.className = 'result-section';
 
@@ -1058,7 +1088,7 @@ function showResult(data) {
     body.appendChild(div);
   });
 
-  // Fallback — show full text if no sections parsed (canvas doesn't count)
+  // Fallback
   const textSections = Array.from(body.children).filter(el => !el.classList.contains('result-frame-wrap'));
   if (textSections.length === 0) {
     const fallback = document.createElement('div');
@@ -1067,85 +1097,71 @@ function showResult(data) {
     body.appendChild(fallback);
   }
 
+  // Technical explanation button
+  const techBtn = document.createElement('button');
+  techBtn.className = 'tech-btn';
+  techBtn.id = 'techBtn';
+  techBtn.textContent = t.techBtn;
+  techBtn.style.display = lastAnalysisSkill ? 'block' : 'none';
+  techBtn.onclick = runTechnicalExplanation;
+  body.appendChild(techBtn);
+
   document.getElementById('resultCard').classList.add('visible');
   document.getElementById('newBtn').textContent = t.newBtn;
   document.getElementById('newBtn').classList.add('visible');
   document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function drawFrameWithOverlay(canvas, b64, overlayText) {
+function drawBestFrame(canvas, b64) {
   const img = new Image();
   img.onload = () => {
-    // Scale to fit within 440x300, maintaining aspect ratio
     const MAX_W = 440, MAX_H = 300;
     const scale = Math.min(MAX_W / img.width, MAX_H / img.height, 1);
     canvas.width = Math.round(img.width * scale);
     canvas.height = Math.round(img.height * scale);
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    if (!overlayText) return;
-
-    const sx = canvas.width / 400;
-    const sy = canvas.height / 600;
-
-    for (const line of overlayText.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      const parts = trimmed.split('|').map(p => p.trim());
-      const cmd = parts[0] || '';
-      const color = parts[1] || '#FFFFFF';
-      const label = parts[2] || '';
-
-      if (cmd.startsWith('LINE:')) {
-        const m = cmd.match(/(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)/);
-        if (m) {
-          const [x1, y1, x2, y2] = [+m[1]*sx, +m[2]*sy, +m[3]*sx, +m[4]*sy];
-          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-          ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
-          if (label) drawOverlayLabel(ctx, label, (x1+x2)/2, (y1+y2)/2 - 8, color);
-        }
-      } else if (cmd.startsWith('ARROW:')) {
-        const m = cmd.match(/(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)/);
-        if (m) {
-          const [x1, y1, x2, y2] = [+m[1]*sx, +m[2]*sy, +m[3]*sx, +m[4]*sy];
-          drawOverlayArrow(ctx, x1, y1, x2, y2, color);
-          if (label) drawOverlayLabel(ctx, label, x2, y2 - 14, color);
-        }
-      } else if (cmd.startsWith('CIRCLE:')) {
-        const m = cmd.match(/(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)\s+radius\s+(\d+(?:\.\d+)?)/);
-        if (m) {
-          const cx = +m[1]*sx, cy = +m[2]*sy, r = +m[3]*(sx+sy)/2;
-          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
-          ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
-          if (label) drawOverlayLabel(ctx, label, cx, cy - r - 8, color);
-        }
-      }
-    }
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
   };
   img.src = 'data:image/jpeg;base64,' + b64;
 }
 
-function drawOverlayArrow(ctx, x1, y1, x2, y2, color) {
-  const angle = Math.atan2(y2 - y1, x2 - x1);
-  const head = 10;
-  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-  ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x2, y2);
-  ctx.lineTo(x2 - head * Math.cos(angle - Math.PI/6), y2 - head * Math.sin(angle - Math.PI/6));
-  ctx.lineTo(x2 - head * Math.cos(angle + Math.PI/6), y2 - head * Math.sin(angle + Math.PI/6));
-  ctx.closePath(); ctx.fillStyle = color; ctx.fill();
-}
+// ─── TECHNICAL EXPLANATION ────────────────────────────────────────────────────
+async function runTechnicalExplanation() {
+  const t = UI_TEXT[currentLang];
+  const techBtn = document.getElementById('techBtn');
+  if (!techBtn) return;
 
-function drawOverlayLabel(ctx, text, x, y, color) {
-  ctx.font = 'bold 13px "DM Sans", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-  ctx.strokeText(text, x, y);
-  ctx.fillStyle = color;
-  ctx.fillText(text, x, y);
+  techBtn.disabled = true;
+  techBtn.textContent = t.techLoading;
+
+  const existing = document.getElementById('techExplanation');
+  if (existing) existing.remove();
+
+  try {
+    const response = await fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mode: 'technical',
+        skill: lastAnalysisSkill,
+        language: currentLang
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'API error');
+
+    const div = document.createElement('div');
+    div.id = 'techExplanation';
+    div.className = 'tech-explanation';
+    div.textContent = data.explanation || '';
+    techBtn.parentNode.insertBefore(div, techBtn.nextSibling);
+    techBtn.style.display = 'none';
+
+  } catch(err) {
+    techBtn.disabled = false;
+    techBtn.textContent = t.techBtn;
+    showError(err.message);
+  }
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -1160,6 +1176,8 @@ function resetApp() {
   extractedFrames = [];
   frameLabels = [];
   currentFile = null;
+  startPointTime = 0;
+  lastAnalysisSkill = '';
   if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
   videoEl = null;
   const preview = document.getElementById('videoPreview');
@@ -1169,15 +1187,15 @@ function resetApp() {
   preview.pause();
   preview.removeAttribute('src');
   preview.load();
+  document.getElementById('startSlider').value = 0;
+  document.getElementById('startTimeDisplay').textContent = '0:00';
   document.getElementById('videoPreviewSection').classList.remove('visible');
-  document.getElementById('framesSection').classList.remove('visible');
   document.getElementById('analyzeBtn').classList.remove('visible');
   document.getElementById('analyzeBtn').style.display = '';
   document.getElementById('resultCard').classList.remove('visible');
   document.getElementById('newBtn').classList.remove('visible');
   document.getElementById('errorBox').classList.remove('visible');
   document.getElementById('loadingState').classList.remove('visible');
-  document.getElementById('framesGrid').innerHTML = '';
   document.getElementById('fileInput').value = '';
 }
 </script>
