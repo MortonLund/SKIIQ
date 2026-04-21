@@ -4,7 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-SkiIQ is an AI-powered ski technique analyzer. Users upload a video or photo; the browser extracts frames; a Netlify serverless function sends those frames to the Claude API with a detailed ski instruction prompt; the structured response is rendered back in the UI.
+SkiIQ is an AI-powered ski technique analyzer based on the PSIA Alpine Technical Manual. Users upload a video or photo; the browser extracts up to 9 frames; a Netlify serverless function sends those frames to the Claude API; the response includes the best frame with a coaching overlay drawn on canvas.
+
+## Deploying
+
+Claude can commit and push directly — no terminal needed:
+
+```bash
+git add . && git commit -m "message" && git push
+```
+
+Netlify auto-deploys from the `main` branch on GitHub. Site: `nimble-dieffenbachia-8e087b.netlify.app`.
+
+To add a Netlify API token (for build status checking), run:
+```bash
+claude mcp add netlify -e NETLIFY_TOKEN=<your-token> -- npx -y @netlify/mcp
+```
+Get the token from: Netlify dashboard → User settings → Applications → Personal access tokens.
 
 ## Local Development
 
@@ -27,18 +43,21 @@ There is no build step, no test suite, and no linter.
 
 **Data flow:**
 1. User uploads video or image
-2. Browser extracts up to 10 JPEG frames via Canvas API (max 1024×1024, quality 0.75); images are duplicated 5× to simulate frames
-3. Deduplicated frames (max 3 unique) are POSTed as Base64 to `/.netlify/functions/analyze` with a `language` field (`da`/`en`/`zh`)
-4. The function builds a ~3 000-token system prompt based on the Danish Ski School (Den Danske Skiskole) D15 methodology and calls `claude-opus-4-5` (max 1 200 output tokens)
-5. Structured response text is returned and parsed client-side into color-coded sections
+2. Browser extracts up to 9 JPEG frames at 0.25s intervals via Canvas API (max 1024×1024, quality 0.75)
+3. Brightness-based skier centering crops each frame around the darkest region
+4. Frames + frameLabels POSTed as Base64 to `/.netlify/functions/analyze` with `language` field (`da`/`en`/`zh`)
+5. Function uses PSIA Alpine Technical Manual knowledge base, calls `claude-opus-4-5` (max 1500 tokens)
+6. Response JSON: `{ text, bestFrameIndex, bestFrameImage, overlayInstructions }`
+7. Client draws `bestFrameImage` on canvas with LINE/ARROW/CIRCLE overlays; parses text into sections
 
 **Response sections** (parsed by emoji/arrow headers):
-`✓ STRENGTHS` → `→ FOCUS` → `⬅️ EXERCISE` → `↑ DEVELOPMENT CHAIN` → `💬 REMEMBER`
+`✓ WHAT I SEE` → `→ SKILL FOCUS` → `⬤ TRY THIS` → `💬 FEEL THIS`
 
 ## Key Constraints
 
 - **Stateless** — no database, no sessions, no caching
 - **API key is server-side only** — never referenced in `index.html`
 - CORS is open (`*`) in the function
-- The D15 framework (8 development points: Flade Ski, For Stor Skridtstilling, Stive Skiled, Uhensigtsmæssige Bøjeforhold, Hofterotation, Overkropsrotation, Bagvægt, Indoverlæning) is hardcoded in the system prompt in `analyze.js`
-- UI supports three languages (Danish default, English, Chinese); all UI strings are in a `translations` object in `index.html`
+- Analysis methodology: PSIA Alpine Technical Manual (4 skills: Rotational Control, Edge Control, Pressure Control, Balance)
+- Overlay coordinates are relative to 400×600 — scaled to actual canvas size in client
+- UI supports three languages (Danish default, English, Chinese); all UI strings are in a `UI_TEXT` object in `index.html`
