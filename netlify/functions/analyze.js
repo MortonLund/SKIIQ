@@ -9,20 +9,20 @@ Source: PSIA Alpine Technical Manual, © 2014 American Snowsports Education Asso
 
 THE SKILLS CONCEPT
 ==================
-All alpine skiing relies on a skillful blend of four fundamental skills. These skills define the 
+All alpine skiing relies on a skillful blend of four fundamental skills. These skills define the
 action of the skis on the snow — not specific body positions:
 
 1. ROTATIONAL CONTROL
 The ability to control the direction the skis point. Rotational input can come from:
-- LEG ROTATION: Movement of the lower body (femur rotation in hip socket + lower leg). Most 
-  versatile and effective source. Provides constant rotational input throughout entire turn. 
+- LEG ROTATION: Movement of the lower body (femur rotation in hip socket + lower leg). Most
+  versatile and effective source. Provides constant rotational input throughout entire turn.
   Duration, Intensity, Rate, Timing (DIRT) can be finely adjusted.
-- COUNTER-ROTATION: Upper body turns opposite direction to lower body. Quick, explosive. 
+- COUNTER-ROTATION: Upper body turns opposite direction to lower body. Quick, explosive.
   Most effective only at start or finish of turn. Not effective when drawn out slowly.
-- UPPER-BODY ROTATION: Upper body turns first, legs follow in same direction. Generally 
-  inefficient. Common in inexperienced skiers who cannot initiate turns any other way. 
+- UPPER-BODY ROTATION: Upper body turns first, legs follow in same direction. Generally
+  inefficient. Common in inexperienced skiers who cannot initiate turns any other way.
   Upper body produces all rotational input; legs simply follow.
-- ANTICIPATION: Upper body faces downhill while skis continue across hill. Preparatory move 
+- ANTICIPATION: Upper body faces downhill while skis continue across hill. Preparatory move
   that creates strong reaction when edges release. Commonly used in short-radius turns.
 
 Ski outcomes from rotational control:
@@ -47,9 +47,9 @@ Managing forces acting on skis: distribution along ski length (fore/aft) and ski
 - SKI-TO-SKI TRANSFER: Moving CM toward inside of turn transfers pressure to outside ski.
   Outside ski (farthest from turn center) carries primary pressure in good skiing.
   Transfer methods: flexion of old outside leg + extension of new outside leg; or extending both legs.
-- Signs of good pressure control: smooth snow contact, skis bowed through turn, joints moving 
+- Signs of good pressure control: smooth snow contact, skis bowed through turn, joints moving
   like shock absorbers, harmonious weight transfer at turn initiation
-- Signs of poor pressure control: hacking through arc, skidding at finish, body thrown around 
+- Signs of poor pressure control: hacking through arc, skidding at finish, body thrown around
   by terrain, stiff joints, "pumping" with hips
 
 4. BALANCE (Dynamic)
@@ -59,15 +59,15 @@ Balance is both a prerequisite for and outcome of blending the other three skill
 - Signs of good balance: primary pressure on outside ski, CM neutral (not too far back/forward),
   whole body active and mobile, movements originate from ankle supported by knee/hip/back,
   hips/pelvis neutral and stable, inside leg bends while outside leg extends
-- Signs of poor balance: weight on inside ski, hands/hips behind boot tops, some joints locked 
+- Signs of poor balance: weight on inside ski, hands/hips behind boot tops, some joints locked
   while others over-bent, upper body leaning into turn throughout arc, outside ski unweighted
 
 SKILL BLENDING
 ==============
-All three skills (rotational, edge, pressure) are present in every turn — they are blended 
+All three skills (rotational, edge, pressure) are present in every turn — they are blended
 in varying degrees to achieve different outcomes:
 - More edge control + less rotation = carved turns
-- More rotation = skidded turns for speed control  
+- More rotation = skidded turns for speed control
 - Early edge + pressure = round turn shape (C-shape = ideal)
 - Late edge = J or Z shaped track (indicates problems)
 
@@ -87,7 +87,7 @@ STEP ONE: OBSERVE
 - DIRT of movements: Duration, Intensity, Rate, Timing
 - Turn phase: where in the turn does movement occur (initiation, shaping, finish)?
 - Upper vs lower body: movements begin where? Stable upper body + active leg movements = good
-- Arm position reveals balance: hands dropped to sides = weight back; excessive arm movement = 
+- Arm position reveals balance: hands dropped to sides = weight back; excessive arm movement =
   rotation or balance issue
 
 STEP TWO: EVALUATE (Real vs. Ideal)
@@ -98,9 +98,9 @@ STEP TWO: EVALUATE (Real vs. Ideal)
 
 STEP THREE: PRESCRIBE
 - Address ONE primary skill issue — the root cause
-- Use non-judgmental, fact-based language: describe the movement, where it occurs, 
+- Use non-judgmental, fact-based language: describe the movement, where it occurs,
   what the ski does as a result
-- Example: "Your hand dropped to your side after you planted your pole, 
+- Example: "Your hand dropped to your side after you planted your pole,
   which caused you to lean in and lose pressure on your outside ski"
 - NOT: "That's bad form" or "You're doing it wrong"
 
@@ -122,50 +122,55 @@ COMMON SKILL IMBALANCES AND THEIR OBSERVABLE SIGNS:
 ====================================================
 
 ROTATIONAL CONTROL ISSUES:
-- Upper-body rotation: shoulders turn before legs; elbows/hands swing wide; 
+- Upper-body rotation: shoulders turn before legs; elbows/hands swing wide;
   common cause = inability to initiate turn with legs alone
-- Insufficient leg rotation: skis pivot without steering; Z-shaped track; 
+- Insufficient leg rotation: skis pivot without steering; Z-shaped track;
   upper body does all the work
 - Poor timing: rotation too early (pivot) or too late (skids at finish)
-Observable on frames: shoulder line diagonal to ski direction; arms swinging; 
+Observable on frames: shoulder line diagonal to ski direction; arms swinging;
 upper body leading into turn
 
-EDGE CONTROL ISSUES:  
+EDGE CONTROL ISSUES:
 - Skis too flat: skidding through entire arc; broad rutted track; no carved element
 - Abrupt edging: kangaroo-like movements; rhythm breaks; happens late in turn
 - Inside ski dominant: inside edge of inside ski catches; knee collapses in
-Observable on frames: ski tails washing out; flat skis in initiation; 
+Observable on frames: ski tails washing out; flat skis in initiation;
 inside hip dropping lower than outside
 
 PRESSURE CONTROL ISSUES:
-- Aft (rear) pressure: CM behind BOS; tips light/chattering; often caused by fear; 
+- Aft (rear) pressure: CM behind BOS; tips light/chattering; often caused by fear;
   makes turn initiation very difficult; arms pushed forward to compensate
 - Forward pressure: CM ahead of BOS; tips dig; often caused by over-flexing ankles
-- Outside ski not loaded: balance on inside ski; outside ski light; common with 
+- Outside ski not loaded: balance on inside ski; outside ski light; common with
   excessive inside lean
-Observable on frames: hips behind heels; hands behind body; inside ski carrying 
+Observable on frames: hips behind heels; hands behind body; inside ski carrying
 visible pressure; arms forward as counterbalance
 
 BALANCE ISSUES:
 - Lateral: inside lean (A-frame); upper body tipping into turn as unit
 - Fore/aft: backseat position; tips floating; excessive forward lean
 - Rotational imbalance: upper and lower body not separated; hips rotating with legs
-Observable on frames: whole body leaning as one unit; lack of angulation between 
+Observable on frames: whole body leaning as one unit; lack of angulation between
 upper and lower body; hips and shoulders aligned with skis rather than down the hill
 
 KEY PSIA TERMINOLOGY:
 =====================
 - CM: Center of Mass
-- BOS: Base of Support  
+- BOS: Base of Support
 - DIRT: Duration, Intensity, Rate, Timing (of movements)
 - Carving: ski follows its sidecut when edged and pressured
 - Steering: actively directing edged ski along arc
 - Angulation: angle created between upper and lower body (hip or knee angulation)
-- Counter: twisted relationship between upper and lower body (shoulders face more 
+- Counter: twisted relationship between upper and lower body (shoulders face more
   downhill than hips/skis)
 - Athletic stance: ready position — feet shoulder-width, slight flex at ankle/knee/hip
 - Turn shape: C (ideal, round), J (late edge), Z (pivot/skid dominant)
 `;
+
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Content-Type': 'application/json'
+};
 
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') {
@@ -180,17 +185,64 @@ exports.handler = async function(event) {
     };
   }
 
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json'
-  };
-
   try {
-    const { images, language, frameLabels } = JSON.parse(event.body);
+    const body = JSON.parse(event.body);
+    const { mode, skill, images, language, frameLabels } = body;
 
-    const langInstr = language === 'da'
-      ? 'Respond entirely in Danish. Use plain everyday Danish — not technical jargon.'
-      : language === 'zh'
+    // ── TECHNICAL EXPLANATION MODE ──────────────────────────────────────────────
+    if (mode === 'technical') {
+      const langInstr = language === 'zh'
+        ? 'Respond entirely in Simplified Chinese (Mandarin). Use plain everyday language.'
+        : 'Respond entirely in English. Use plain everyday language.';
+
+      const prompt = `You are a PSIA-certified alpine ski expert. Provide a detailed biomechanical and technical explanation about the PSIA skill: "${skill}".
+
+${langInstr}
+
+Base your explanation EXCLUSIVELY on this knowledge:
+${PSIA_KNOWLEDGE}
+
+Cover these points in flowing paragraphs (no headers):
+1. What is happening biomechanically when this skill is under-developed or poorly timed
+2. Why it matters — what happens to ski performance as a result
+3. The specific movement pattern that needs to change
+4. What improvement feels like in the body (kinesthetic cues)
+
+Write 200–280 words. Accessible language — no unnecessary jargon. Do not use bullet points or headers.`;
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-5',
+          max_tokens: 600,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        return { statusCode: response.status, headers, body: JSON.stringify({ error: data?.error?.message || 'API error' }) };
+      }
+
+      const explanation = (data.content || []).map(c => c.text || '').join('').trim();
+      return { statusCode: 200, headers, body: JSON.stringify({ explanation }) };
+    }
+
+    // ── MAIN ANALYSIS MODE ───────────────────────────────────────────────────────
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'No images provided for analysis' })
+      };
+    }
+
+    const langInstr = language === 'zh'
       ? 'Respond entirely in Simplified Chinese (Mandarin). Use plain everyday language.'
       : 'Respond entirely in English. Use plain everyday language.';
 
@@ -207,9 +259,7 @@ ${PSIA_KNOWLEDGE}
 TASK: Analyze the provided ski frames using the PSIA Movement Analysis process.
 
 STEP 1 — FRAME SELECTION
-You will receive multiple frames extracted from a ski video. The frames are labeled with their position in the turn cycle. 
-
-First, identify which frame is MOST REPRESENTATIVE of the primary skill issue you will prescribe. This frame will be displayed to the user with a graphic overlay showing your coaching feedback. Select the frame that most clearly shows the movement pattern you are addressing — ideally at the moment it is most visible (often at or just past the fall line).
+You will receive multiple frames extracted from a ski video. Identify which single frame MOST CLEARLY shows the primary skill issue you are prescribing — ideally at or just past the fall line where the movement pattern is most visible.
 
 Respond with your chosen frame number in this format exactly:
 BEST_FRAME: [number]
@@ -231,22 +281,7 @@ EVALUATE: Compare real to ideal (per PSIA standards):
 
 PRESCRIBE: ONE primary skill focus. Use non-judgmental, fact-based language.
 
-STEP 3 — GRAPHIC OVERLAY DESCRIPTION
-After selecting the best frame, describe exactly what lines and arrows to draw on that frame to illustrate the coaching point. Use pixel coordinates relative to a 400x600 image (or adjust proportionally).
-
-Provide overlay instructions in this exact format:
-OVERLAY_START
-LINE: x1,y1 to x2,y2 | color | label
-ARROW: x1,y1 to x2,y2 | color | label  
-CIRCLE: cx,cy radius r | color | label
-OVERLAY_END
-
-Use:
-- RED (#FF4444) for what is happening wrong
-- GREEN (#44FF88) for what should happen / direction of improvement
-- YELLOW (#FFD700) for neutral reference points
-
-STEP 4 — OUTPUT FORMAT
+STEP 3 — OUTPUT FORMAT
 
 Use EXACTLY these section headers:
 
@@ -269,7 +304,6 @@ TONE RULES (from PSIA manual):
 - Timely — skier reads this on a phone on the slope
 - Maximum 160 words total across all sections`;
 
-    // Build image content with frame labels
     const labels = frameLabels || images.map((_, i) => `Frame ${i + 1}`);
     const imageContent = images.flatMap((b64, i) => ([
       { type: 'text', text: `Frame ${i + 1} of ${images.length}: ${labels[i]}` },
@@ -285,12 +319,12 @@ TONE RULES (from PSIA manual):
       },
       body: JSON.stringify({
         model: 'claude-opus-4-5',
-        max_tokens: 1500,
+        max_tokens: 1200,
         system: systemPrompt,
         messages: [{
           role: 'user',
           content: [
-            { type: 'text', text: 'Please analyze all frames, select the most representative frame, provide overlay instructions, and give PSIA-based coaching feedback.' },
+            { type: 'text', text: 'Please analyze all frames, select the most representative frame, and give PSIA-based coaching feedback.' },
             ...imageContent
           ]
         }]
@@ -309,18 +343,12 @@ TONE RULES (from PSIA manual):
 
     const text = (data.content || []).map(c => c.text || '').join('').trim();
 
-    // Parse best frame selection
     const frameMatch = text.match(/BEST_FRAME:\s*(\d+)/i);
     const bestFrameIndex = frameMatch ? parseInt(frameMatch[1]) - 1 : 0;
+    const safeIndex = Math.min(Math.max(bestFrameIndex, 0), images.length - 1);
 
-    // Parse overlay instructions
-    const overlayMatch = text.match(/OVERLAY_START([\s\S]*?)OVERLAY_END/i);
-    const overlayText = overlayMatch ? overlayMatch[1].trim() : '';
-
-    // Clean the response text (remove BEST_FRAME and OVERLAY sections)
     const cleanText = text
       .replace(/BEST_FRAME:\s*\d+/i, '')
-      .replace(/OVERLAY_START[\s\S]*?OVERLAY_END/i, '')
       .trim();
 
     return {
@@ -328,9 +356,8 @@ TONE RULES (from PSIA manual):
       headers,
       body: JSON.stringify({
         text: cleanText,
-        bestFrameIndex: Math.min(bestFrameIndex, images.length - 1),
-        bestFrameImage: images[Math.min(bestFrameIndex, images.length - 1)],
-        overlayInstructions: overlayText
+        bestFrameIndex: safeIndex,
+        bestFrameImage: images[safeIndex]
       })
     };
 
