@@ -195,20 +195,25 @@ exports.handler = async function(event) {
         ? 'Respond entirely in Simplified Chinese (Mandarin). Use plain everyday language.'
         : 'Respond entirely in English. Use plain everyday language.';
 
-      const prompt = `You are a PSIA-certified alpine ski expert. Provide a detailed biomechanical and technical explanation about the PSIA skill: "${skill}".
+      const prompt = `You are a friendly ski coach explaining something to a regular skier — not a textbook author.
 
 ${langInstr}
 
-Base your explanation EXCLUSIVELY on this knowledge:
+The skier's identified improvement area is: "${skill}".
+
+Use the following reference material for accuracy, but explain everything in your own plain words — do NOT copy from it:
 ${PSIA_KNOWLEDGE}
 
-Cover these points in flowing paragraphs (no headers):
-1. What is happening biomechanically when this skill is under-developed or poorly timed
-2. Why it matters — what happens to ski performance as a result
-3. The specific movement pattern that needs to change
-4. What improvement feels like in the body (kinesthetic cues)
+In flowing paragraphs (no bullet points, no headers), explain:
+- What is actually happening in the body and on the skis when this skill is off
+- Why it makes skiing harder — what the skier typically feels or loses control of
+- What the correct movement feels like when it clicks
 
-Write 200–280 words. Accessible language — no unnecessary jargon. Do not use bullet points or headers.`;
+Rules:
+- Plain everyday language — avoid technical abbreviations (CM, BOS, DIRT) unless you explain them in simple terms immediately
+- Use analogies and real-world comparisons (e.g. "like sitting back in a chair" or "like pushing down on a bicycle pedal")
+- Do not copy sentences from the reference — explain it fresh, as if talking to a friend
+- Maximum 200 words`;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -285,8 +290,10 @@ STEP 3 — OUTPUT FORMAT
 
 Use EXACTLY these section headers:
 
+IMPORTANT: Never reference specific frame numbers in your feedback (e.g. 'frames 4-6', 'frame 3'). You have selected ONE best frame. Write your feedback as if you are looking at a single photo of this skier. Do not mention multiple frames, turns, or sequences.
+
 ✓ WHAT I SEE:
-[2-3 sentences. Describe what is actually happening in the skiing — factual and non-judgmental. Reference specific frames if helpful. Mention one genuine strength if visible.]
+[2-3 sentences. Describe what is actually happening in the skiing — factual and non-judgmental. Mention one genuine strength if visible.]
 
 → SKILL FOCUS:
 [Name the ONE PSIA skill (Rotational Control / Edge Control / Pressure Control / Balance) that needs development. Explain in plain language what is happening and why it matters for this skier's performance. Max 3 sentences.]

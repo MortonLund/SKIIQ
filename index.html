@@ -450,7 +450,7 @@
   <!-- Video preview: video first, label + button below -->
   <div class="video-preview-section" id="videoPreviewSection">
     <video id="videoPreview" controls playsinline muted></video>
-    <div class="section-label" id="videoPreviewLabel">Scrub to where the turn starts</div>
+    <div class="section-label" id="videoPreviewLabel">Move the marker to where you want to start the analysis</div>
     <button class="mark-btn" id="markBtn" onclick="markTurnStart()">▶ Start analysis from here</button>
   </div>
 
@@ -518,7 +518,7 @@ const UI_TEXT = {
     uploadTip: 'Tip: Film skier from the front or side. Longer turns give the best technical analysis.',
     uploadTitle: 'Upload video or image',
     uploadSub: 'Scrub the video to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
-    videoLabel: 'Scrub to where the turn starts',
+    videoLabel: 'Move the marker to where you want to start the analysis',
     markBtn: '▶ Start analysis from here',
     analyzeBtn: 'Analyse my skiing',
     loadingTitle: 'Analysing your skiing...',
@@ -538,7 +538,7 @@ const UI_TEXT = {
     uploadTip: '提示：从正面或侧面拍摄滑雪者。更长的弯道能提供最佳的技术分析。',
     uploadTitle: '上传视频或图片',
     uploadSub: '拖动视频进度条到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
-    videoLabel: '拖动到转弯开始处',
+    videoLabel: '将标记移动到您想要开始分析的位置',
     markBtn: '▶ 从此处开始分析',
     analyzeBtn: '分析我的滑雪',
     loadingTitle: '正在分析您的滑雪...',
@@ -679,45 +679,54 @@ function captureFrames(video, timestamps, url, labels, gen) {
   const frames = [];
   let idx = 0;
 
-  function captureNext() {
-    if (idx >= timestamps.length) {
-      video.onseeked = null;
-      URL.revokeObjectURL(url);
-      videoUrl = null;
-      videoEl = null;
-      if (frames.length === 0) {
-        showError('Could not extract frames. Try uploading an image instead.');
-        resetApp();
-        return;
-      }
-      applyMotionCrop(frames).then(cropped => {
-        if (gen !== cropGeneration) return;
-        extractedFrames = cropped;
-        frameLabels = (labels || []).slice(0, cropped.length);
-        document.getElementById('analyzeBtn').classList.add('visible');
-      });
-      return;
-    }
-    try {
-      video.currentTime = timestamps[idx];
-    } catch(e) {
-      idx++;
-      captureNext();
-    }
-  }
-
-  video.onseeked = () => {
+  function captureCurrentFrame() {
     try {
       canvas.width = Math.min(video.videoWidth || 640, 1024);
       canvas.height = Math.min(video.videoHeight || 360, 1024);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       frames.push(canvas.toDataURL('image/jpeg', 0.75));
     } catch(e) { /* skip */ }
+  }
+
+  function finish() {
+    video.onseeked = null;
+    URL.revokeObjectURL(url);
+    videoUrl = null;
+    videoEl = null;
+    if (frames.length === 0) {
+      showError('Could not extract frames. Try uploading an image instead.');
+      resetApp();
+      return;
+    }
+    applyMotionCrop(frames).then(cropped => {
+      if (gen !== cropGeneration) return;
+      extractedFrames = cropped;
+      frameLabels = (labels || []).slice(0, cropped.length);
+      document.getElementById('analyzeBtn').classList.add('visible');
+    });
+  }
+
+  function seekNext() {
+    if (idx >= timestamps.length) { finish(); return; }
+    const target = timestamps[idx];
+    // If already at target time, onseeked won't fire — capture directly
+    if (Math.abs((video.currentTime || 0) - target) < 0.02) {
+      captureCurrentFrame();
+      idx++;
+      seekNext();
+    } else {
+      try { video.currentTime = target; }
+      catch(e) { captureCurrentFrame(); idx++; seekNext(); }
+    }
+  }
+
+  video.onseeked = () => {
+    captureCurrentFrame();
     idx++;
-    captureNext();
+    seekNext();
   };
 
-  captureNext();
+  seekNext();
 }
 
 // ─── BRIGHTNESS CROP ──────────────────────────────────────────────────────────
@@ -961,114 +970,9 @@ function drawBestFrame(canvas, b64) {
     const scale = Math.min(MAX_W / img.width, MAX_H / img.height, 1);
     canvas.width = Math.round(img.width * scale);
     canvas.height = Math.round(img.height * scale);
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    if (lastAnalysisSkill) drawPsiaSilhouette(ctx, canvas.width, canvas.height, lastAnalysisSkill);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
   };
   img.src = 'data:image/jpeg;base64,' + b64;
-}
-
-function drawPsiaSilhouette(ctx, W, H, skill) {
-  const s = (skill || '').toLowerCase();
-
-  ctx.save();
-  ctx.globalAlpha = 0.35;
-  ctx.strokeStyle = '#44FF88';
-  ctx.fillStyle = '#44FF88';
-  const lw = Math.max(2, Math.min(W, H) * 0.013);
-  ctx.lineWidth = lw;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  const fh = H * 0.62;
-  const top = H * 0.15;
-  const cx = W * 0.50;
-
-  const headR  = fh * 0.08;
-  const headY  = top + headR;
-  const neckY  = top + fh * 0.17;
-  const shY    = top + fh * 0.22;   // shoulder Y
-  const hipY   = top + fh * 0.52;
-  const kneeY  = top + fh * 0.72;
-  const ankleY = top + fh * 0.88;
-  const footY  = top + fh * 0.98;
-
-  const sw = fh * 0.20;  // shoulder half-span
-  const hw = fh * 0.13;  // hip half-span
-  const ks = fh * 0.14;  // knee spread
-  const fw = fh * 0.09;  // foot length
-
-  const c = (x, y, r) => { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke(); };
-  const l = (x1, y1, x2, y2) => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
-
-  if (s.includes('rotational')) {
-    // Upright stable upper body; legs steering/rotating under
-    c(cx, headY, headR);
-    l(cx, neckY, cx, hipY);
-    l(cx - sw, shY, cx + sw, shY);
-    l(cx - sw, shY, cx - sw * 0.5, shY + fh * 0.22);
-    l(cx + sw, shY, cx + sw * 0.5, shY + fh * 0.22);
-    l(cx - hw, hipY, cx + hw, hipY);
-    l(cx - hw, hipY,    cx - ks * 1.2, kneeY);
-    l(cx - ks * 1.2,    kneeY, cx - ks * 0.7, ankleY);
-    l(cx + hw, hipY,    cx + ks * 1.2, kneeY);
-    l(cx + ks * 1.2,    kneeY, cx + ks * 0.7, ankleY);
-    l(cx - ks * 0.7,    ankleY, cx - ks * 0.7 - fw * 0.4, footY);
-    l(cx + ks * 0.7,    ankleY, cx + ks * 0.7 + fw * 0.4, footY);
-
-  } else if (s.includes('edge')) {
-    // Angulation: upper body upright, hips/knees tipping into turn (right)
-    const tilt = fh * 0.10;
-    const hipX = cx + tilt;
-    const kneeX = cx + tilt * 1.6;
-    c(cx, headY, headR);
-    l(cx, neckY, cx, hipY - fh * 0.03);
-    l(cx, hipY - fh * 0.03, hipX, hipY);    // hip angulation bend
-    l(cx - sw, shY, cx + sw, shY);
-    l(cx - sw, shY, cx - sw * 1.3, shY + fh * 0.24);   // outside arm out for balance
-    l(cx + sw, shY, cx + sw * 0.6, shY + fh * 0.18);
-    l(hipX - hw, hipY, hipX + hw, hipY);
-    l(hipX - hw, hipY, kneeX - ks, kneeY);
-    l(hipX + hw, hipY, kneeX + ks * 0.4, kneeY);
-    l(kneeX - ks,      kneeY, kneeX - ks * 0.7, ankleY);
-    l(kneeX + ks * 0.4, kneeY, kneeX + ks * 0.1, ankleY);
-    l(kneeX - ks * 0.7, ankleY, kneeX - ks * 0.7 - fw * 0.4, footY);
-    l(kneeX + ks * 0.1, ankleY, kneeX + ks * 0.1 + fw * 0.4, footY);
-
-  } else if (s.includes('pressure')) {
-    // Ideal pressure: shin forward, CM over feet, ankles flexed into boots
-    const fwd = fh * 0.07;
-    c(cx, headY, headR);
-    l(cx, neckY, cx + fwd * 0.3, hipY);    // body slight forward lean
-    l(cx - sw, shY, cx + sw, shY);
-    l(cx - sw, shY, cx - sw * 0.7, shY + fh * 0.22);
-    l(cx + sw, shY, cx + sw * 0.7, shY + fh * 0.22);
-    const hipXc = cx + fwd * 0.3;
-    l(hipXc - hw, hipY, hipXc + hw, hipY);
-    l(hipXc - hw, hipY, hipXc + fwd * 0.5 - hw, kneeY);   // knees forward
-    l(hipXc + hw, hipY, hipXc + fwd * 0.5 + hw, kneeY);
-    l(hipXc + fwd * 0.5 - hw, kneeY, cx - hw * 0.7, ankleY);
-    l(hipXc + fwd * 0.5 + hw, kneeY, cx + hw * 0.7, ankleY);
-    l(cx - hw * 0.7, ankleY, cx - hw * 0.7 - fw * 0.3, footY);
-    l(cx + hw * 0.7, ankleY, cx + hw * 0.7 + fw * 0.3, footY);
-
-  } else {
-    // BALANCE / ATHLETIC STANCE: upright, slight knee bend, arms forward
-    c(cx, headY, headR);
-    l(cx, neckY, cx, hipY);
-    l(cx - sw, shY, cx + sw, shY);
-    l(cx - sw, shY, cx - sw * 0.7, shY + fh * 0.22);
-    l(cx + sw, shY, cx + sw * 0.7, shY + fh * 0.22);
-    l(cx - hw, hipY, cx + hw, hipY);
-    l(cx - hw, hipY,  cx - ks,       kneeY);
-    l(cx - ks,        kneeY, cx - ks * 0.8, ankleY);
-    l(cx + hw, hipY,  cx + ks,       kneeY);
-    l(cx + ks,        kneeY, cx + ks * 0.8, ankleY);
-    l(cx - ks * 0.8, ankleY, cx - ks * 0.8 - fw * 0.5, footY);
-    l(cx + ks * 0.8, ankleY, cx + ks * 0.8 + fw * 0.5, footY);
-  }
-
-  ctx.restore();
 }
 
 // ─── TECHNICAL EXPLANATION ────────────────────────────────────────────────────
