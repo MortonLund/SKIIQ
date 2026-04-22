@@ -526,7 +526,7 @@ const UI_TEXT = {
     labelFocus: '→ Skill fokus',
     labelExercise: '⬤ Prøv denne øvelse',
     labelQuote: '💬 Mærk dette',
-    techBtn: '📖 Læs den tekniske forklaring',
+    techBtn: '📖 Dyk ned i den tekniske forklaring',
     techLoading: 'Henter...',
   },
   en: {
@@ -546,7 +546,7 @@ const UI_TEXT = {
     labelFocus: '→ Skill focus',
     labelExercise: '⬤ Try this exercise',
     labelQuote: '💬 Feel this',
-    techBtn: '📖 Read the technical explanation',
+    techBtn: '📖 Dive into the technical explanation',
     techLoading: 'Loading...',
   },
   zh: {
@@ -566,7 +566,7 @@ const UI_TEXT = {
     labelFocus: '→ 技术重点',
     labelExercise: '⬤ 尝试这个练习',
     labelQuote: '💬 感受这个',
-    techBtn: '📖 阅读技术说明',
+    techBtn: '📖 深入了解技术说明',
     techLoading: '加载中...',
   }
 };
@@ -978,12 +978,15 @@ function speakSection(text, btn) {
       voice = voices.find(v => v.lang.startsWith('zh')) || null;
     } else {
       // Prefer warm, clear voices: Google UK Female, then macOS/iOS named voices
-      const preferred = ['Google UK English Female', 'Samantha', 'Karen', 'Moira', 'Fiona', 'Google US English'];
+      // Prefer warm, empathetic male voices
+      const preferred = ['Google UK English Male', 'Daniel', 'Rishi', 'Oliver', 'Arthur', 'Alex', 'Google US English'];
       for (const name of preferred) {
         const found = voices.find(v => v.name === name);
         if (found) { voice = found; break; }
       }
-      if (!voice) voice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en')) || null;
+      if (!voice) voice = voices.find(v => v.lang === 'en-GB' && v.name.toLowerCase().includes('male'))
+                        || voices.find(v => v.lang === 'en-GB')
+                        || voices.find(v => v.lang.startsWith('en')) || null;
     }
     if (voice) utterance.voice = voice;
 
@@ -1024,10 +1027,27 @@ async function runTechnicalExplanation() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'API error');
 
+    const explanation = data.explanation || '';
     const div = document.createElement('div');
     div.id = 'techExplanation';
     div.className = 'tech-explanation';
-    div.textContent = data.explanation || '';
+
+    const techHeader = document.createElement('div');
+    techHeader.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+    const techSpeakBtn = document.createElement('button');
+    techSpeakBtn.className = 'speak-btn';
+    techSpeakBtn.title = 'Listen';
+    techSpeakBtn.textContent = '🔊';
+    techSpeakBtn.style.opacity = '0.5';
+    techSpeakBtn.addEventListener('click', () => speakSection(explanation, techSpeakBtn));
+    techHeader.appendChild(techSpeakBtn);
+
+    const techText = document.createElement('p');
+    techText.style.cssText = 'margin:0;line-height:1.7;';
+    techText.textContent = explanation;
+
+    div.appendChild(techHeader);
+    div.appendChild(techText);
     techBtn.parentNode.insertBefore(div, techBtn.nextSibling);
     techBtn.style.display = 'none';
 

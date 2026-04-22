@@ -293,22 +293,23 @@ Use EXACTLY these section headers:
 IMPORTANT: Never reference specific frame numbers in your feedback (e.g. 'frames 4-6', 'frame 3'). You have selected ONE best frame. Write your feedback as if you are looking at a single photo of this skier. Do not mention multiple frames, turns, or sequences.
 
 ✓ WHAT I SEE:
-[2-3 sentences. Describe what is actually happening in the skiing — factual and non-judgmental. Mention one genuine strength if visible.]
+[2-3 sentences. Start by naming one genuine technical strength you can observe — something the skier is already doing well. Then state, in a positive forward-looking way, what there is to work on. Factual and non-judgmental. No asterisks or markdown formatting.]
 
 → SKILL FOCUS:
-[Name the ONE PSIA skill (Rotational Control / Edge Control / Pressure Control / Balance) that needs development. Explain in plain language what is happening and why it matters for this skier's performance. Max 3 sentences.]
+[Begin with the phrase "Let's work on your" followed by the ONE PSIA skill name (Rotational Control / Edge Control / Pressure Control / Balance). Then explain in plain language what is happening and why it matters. Max 3 sentences. No asterisks or markdown formatting.]
 
 ⬤ TRY THIS:
-[ONE exercise from the PSIA exercise line. Specify whether it is Stationary, Simple, or Complex level. Make it immediately actionable on the slope. Max 2 sentences.]
+[ONE concrete exercise. Do NOT start with a level label like "Simple level" or "Stationary:" — just go straight into describing what to do on the slope. Max 2 sentences. No asterisks or markdown formatting.]
 
 💬 FEEL THIS:
-[One short sentence describing the kinesthetic sensation the skier should seek — what they will feel in their body when they do it right.]
+[One short sentence describing the kinesthetic sensation the skier should seek. No asterisks or markdown formatting.]
 
 TONE RULES (from PSIA manual):
 - Non-judgmental — describe movements factually, not as mistakes
 - Specific rather than general
 - Right amount of information — less is more
 - Timely — skier reads this on a phone on the slope
+- Never use ** asterisks or markdown bold/italic in any section
 - Maximum 160 words total across all sections`;
 
     const labels = frameLabels || images.map((_, i) => `Frame ${i + 1}`);
