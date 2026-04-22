@@ -409,6 +409,21 @@
   .new-btn.visible { display: block; }
   .new-btn:hover { background: rgba(93,173,226,0.08); }
 
+  .speak-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 0 2px;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+    line-height: 1;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .speak-btn:hover { opacity: 0.9; }
+  .speak-btn.speaking { opacity: 1; }
+
   .error-box {
     margin-top: 20px;
     padding: 16px;
@@ -491,6 +506,7 @@ let videoEl = null;
 let videoUrl = null;
 let cropGeneration = 0;
 let lastAnalysisSkill = '';
+let ttsSpeakingBtn = null;
 
 const UI_TEXT = {
   da: {
@@ -508,7 +524,7 @@ const UI_TEXT = {
     newBtn: '↩ Ny analyse',
     labelStrengths: '✓ Hvad jeg ser',
     labelFocus: '→ Skill fokus',
-    labelExercise: '⬤ Prøv dette',
+    labelExercise: '⬤ Prøv denne øvelse',
     labelQuote: '💬 Mærk dette',
     techBtn: '📖 Læs den tekniske forklaring',
     techLoading: 'Henter...',
@@ -528,7 +544,7 @@ const UI_TEXT = {
     newBtn: '↩ New analysis',
     labelStrengths: '✓ What I see',
     labelFocus: '→ Skill focus',
-    labelExercise: '⬤ Try this',
+    labelExercise: '⬤ Try this exercise',
     labelQuote: '💬 Feel this',
     techBtn: '📖 Read the technical explanation',
     techLoading: 'Loading...',
@@ -548,7 +564,7 @@ const UI_TEXT = {
     newBtn: '↩ 新的分析',
     labelStrengths: '✓ 我看到的',
     labelFocus: '→ 技术重点',
-    labelExercise: '⬤ 尝试这个',
+    labelExercise: '⬤ 尝试这个练习',
     labelQuote: '💬 感受这个',
     techBtn: '📖 阅读技术说明',
     techLoading: '加载中...',
@@ -730,55 +746,9 @@ function captureFrames(video, timestamps, url, labels, gen) {
   seekNext();
 }
 
-// ─── BRIGHTNESS CROP ──────────────────────────────────────────────────────────
+// ─── CENTER CROP ──────────────────────────────────────────────────────────────
 async function applyMotionCrop(frames) {
-  if (frames.length === 0) return frames;
-  const small = await Promise.all(frames.map(f => loadFrameSmall(f, 256)));
-  const centroids = small.map(sf => getDarkCentroid(sf));
-  const smoothed = centroids.map((_, i) => {
-    const win = centroids.slice(Math.max(0, i - 1), i + 2);
-    return {
-      x: win.reduce((s, c) => s + c.x, 0) / win.length,
-      y: win.reduce((s, c) => s + c.y, 0) / win.length,
-    };
-  });
-  return Promise.all(frames.map((frame, i) => cropToCentroid(frame, smoothed[i].x, smoothed[i].y)));
-}
-
-function loadFrameSmall(dataUrl, maxSize) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const scale = maxSize / Math.max(img.width, img.height);
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const pixels = canvas.getContext('2d').getImageData(0, 0, w, h).data;
-      resolve({ pixels, w, h });
-    };
-    img.src = dataUrl;
-  });
-}
-
-function getDarkCentroid({ pixels, w, h }) {
-  const THRESHOLD = 130;
-  let sumX = 0, sumY = 0, total = 0;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const idx = (y * w + x) * 4;
-      const brightness = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
-      if (brightness < THRESHOLD) {
-        const darkness = THRESHOLD - brightness;
-        const dx = x / w - 0.5, dy = y / h - 0.5;
-        const weight = darkness * Math.exp(-(dx * dx + dy * dy) * 6);
-        sumX += x * weight; sumY += y * weight; total += weight;
-      }
-    }
-  }
-  if (total < 100) return { x: 0.5, y: 0.5 };
-  return { x: (sumX / total) / w, y: (sumY / total) / h };
+  return Promise.all(frames.map(frame => cropToCentroid(frame, 0.5, 0.5)));
 }
 
 function cropToCentroid(dataUrl, cx, cy) {
@@ -929,11 +899,18 @@ function showResult(data) {
 
     const div = document.createElement('div');
     div.className = 'result-section';
-    if (section.isQuote) {
-      div.innerHTML = `<div class="result-section-label ${section.labelClass}"><div class="label-dot ${section.dotClass}"></div>${section.label}</div><div class="quote-box">${content}</div>`;
-    } else {
-      div.innerHTML = `<div class="result-section-label ${section.labelClass}"><div class="label-dot ${section.dotClass}"></div>${section.label}</div><div class="result-text">${content}</div>`;
-    }
+    const contentHtml = section.isQuote
+      ? `<div class="quote-box">${content}</div>`
+      : `<div class="result-text">${content}</div>`;
+    div.innerHTML = `
+      <div class="result-section-label ${section.labelClass}">
+        <div class="label-dot ${section.dotClass}"></div>
+        <span>${section.label}</span>
+        <button class="speak-btn" title="Listen">🔊</button>
+      </div>
+      ${contentHtml}`;
+    const speakBtn = div.querySelector('.speak-btn');
+    speakBtn.addEventListener('click', (e) => { e.stopPropagation(); speakSection(content, speakBtn); });
     body.appendChild(div);
   });
 
@@ -975,6 +952,54 @@ function drawBestFrame(canvas, b64) {
     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
   };
   img.src = 'data:image/jpeg;base64,' + b64;
+}
+
+// ─── TEXT TO SPEECH ───────────────────────────────────────────────────────────
+function speakSection(text, btn) {
+  if (!('speechSynthesis' in window)) return;
+
+  // Toggle off if already speaking this section
+  if (ttsSpeakingBtn === btn && speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const doSpeak = () => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = currentLang === 'zh' ? 'zh-CN' : 'en-GB';
+    utterance.rate = 0.88;
+    utterance.pitch = 1.05;
+
+    const voices = speechSynthesis.getVoices();
+    let voice = null;
+    if (currentLang === 'zh') {
+      voice = voices.find(v => v.lang.startsWith('zh')) || null;
+    } else {
+      // Prefer warm, clear voices: Google UK Female, then macOS/iOS named voices
+      const preferred = ['Google UK English Female', 'Samantha', 'Karen', 'Moira', 'Fiona', 'Google US English'];
+      for (const name of preferred) {
+        const found = voices.find(v => v.name === name);
+        if (found) { voice = found; break; }
+      }
+      if (!voice) voice = voices.find(v => v.lang === 'en-GB') || voices.find(v => v.lang.startsWith('en')) || null;
+    }
+    if (voice) utterance.voice = voice;
+
+    utterance.onstart = () => { btn.textContent = '⏹'; btn.classList.add('speaking'); ttsSpeakingBtn = btn; };
+    utterance.onend = () => { btn.textContent = '🔊'; btn.classList.remove('speaking'); if (ttsSpeakingBtn === btn) ttsSpeakingBtn = null; };
+    utterance.onerror = () => { btn.textContent = '🔊'; btn.classList.remove('speaking'); if (ttsSpeakingBtn === btn) ttsSpeakingBtn = null; };
+
+    speechSynthesis.speak(utterance);
+  };
+
+  // Voices load asynchronously on first access in some browsers
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+  } else {
+    doSpeak();
+  }
 }
 
 // ─── TECHNICAL EXPLANATION ────────────────────────────────────────────────────
@@ -1021,6 +1046,8 @@ function showError(msg) {
 }
 
 function resetApp() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  ttsSpeakingBtn = null;
   cropGeneration++;
   extractedFrames = [];
   frameLabels = [];
