@@ -472,7 +472,6 @@
       <div class="result-icon">🎿</div>
       <div>
         <div class="result-title" id="resultTitle">Your ski analysis</div>
-        <div class="result-subtitle" id="resultSubtitle">PSIA analysis</div>
       </div>
     </div>
     <div class="result-body" id="resultBody"></div>
@@ -495,7 +494,7 @@ let lastAnalysisSkill = '';
 
 const UI_TEXT = {
   da: {
-    uploadTip: 'Tip: Film skiløberen fra fronten eller siden. Længere sving giver den bedste tekniske analyse.',
+    uploadTip: 'Tip: Film skiløberen fra fronten og mens de passerer forbi dig for bedst resultat.',
     uploadTitle: 'Upload video eller billede',
     uploadSub: 'Spol til det sted, du vil starte analysen. Analysen sker på 1-2 sving derefter.',
     videoLabel: 'Spol til svinget starter',
@@ -515,7 +514,7 @@ const UI_TEXT = {
     techLoading: 'Henter...',
   },
   en: {
-    uploadTip: 'Tip: Film skier from the front or side. Longer turns give the best technical analysis.',
+    uploadTip: 'Tip: Film the skier from the front and as they pass by you for best results.',
     uploadTitle: 'Upload video or image',
     uploadSub: 'Scrub the video to where you want to start the analysis. The analysis covers 1–2 turns from that point.',
     videoLabel: 'Move the marker to where you want to start the analysis',
@@ -535,7 +534,7 @@ const UI_TEXT = {
     techLoading: 'Loading...',
   },
   zh: {
-    uploadTip: '提示：从正面或侧面拍摄滑雪者。更长的弯道能提供最佳的技术分析。',
+    uploadTip: '提示：从正面拍摄滑雪者，并在他们经过您身旁时拍摄，效果最佳。',
     uploadTitle: '上传视频或图片',
     uploadSub: '拖动视频进度条到您想开始分析的位置，分析涵盖从该点起的1-2个转弯。',
     videoLabel: '将标记移动到您想要开始分析的位置',
@@ -594,6 +593,8 @@ function processFile(file) {
   const isVideo = file.type.startsWith('video/');
   const isImage = file.type.startsWith('image/');
   if (!isVideo && !isImage) return showError('Please upload a video or image file.');
+  document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('uploadTip').style.display = 'none';
   if (isImage) extractFramesFromImage(file);
   else extractFramesFromVideo(file);
 }
@@ -619,7 +620,7 @@ function extractFramesFromImage(file) {
     resizeImageToBase64(e.target.result, 1024, 1024, (resized) => {
       extractedFrames = [resized];
       frameLabels = ['Image'];
-      document.getElementById('analyzeBtn').classList.add('visible');
+      runAnalysis();
     });
   };
   reader.readAsDataURL(file);
@@ -702,7 +703,7 @@ function captureFrames(video, timestamps, url, labels, gen) {
       if (gen !== cropGeneration) return;
       extractedFrames = cropped;
       frameLabels = (labels || []).slice(0, cropped.length);
-      document.getElementById('analyzeBtn').classList.add('visible');
+      runAnalysis();
     });
   }
 
@@ -855,7 +856,9 @@ async function runAnalysis() {
   } catch (err) {
     loadingState.classList.remove('visible');
     showError(err.message || 'Unknown error');
-    document.getElementById('analyzeBtn').style.display = 'flex';
+    document.getElementById('uploadZone').style.display = '';
+    document.getElementById('uploadTip').style.display = '';
+    document.getElementById('analyzeBtn').style.display = extractedFrames.length ? 'flex' : 'none';
   }
 }
 
@@ -872,7 +875,6 @@ function showResult(data) {
   const text = data.text || '';
   const t = UI_TEXT[currentLang];
   document.getElementById('resultTitle').textContent = t.resultTitle;
-  document.getElementById('resultSubtitle').textContent = t.resultSubtitle;
 
   const body = document.getElementById('resultBody');
   body.innerHTML = '';
@@ -1033,6 +1035,8 @@ function resetApp() {
   preview.pause();
   preview.removeAttribute('src');
   preview.load();
+  document.getElementById('uploadZone').style.display = '';
+  document.getElementById('uploadTip').style.display = '';
   document.getElementById('videoPreviewSection').classList.remove('visible');
   document.getElementById('analyzeBtn').classList.remove('visible');
   document.getElementById('analyzeBtn').style.display = '';
