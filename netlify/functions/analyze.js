@@ -167,6 +167,59 @@ KEY PSIA TERMINOLOGY:
 - Turn shape: C (ideal, round), J (late edge), Z (pivot/skid dominant)
 `;
 
+const DDS_KNOWLEDGE = `
+═══════════════════════════════════════════════════════
+DEN DANSKE SKISKOLES ALPIN MANUAL — VISUAL INDICATORS & TURN PHASE GUIDE
+Source: Den Danske Skiskoles Alpin Manual, D14-D15
+Use this section ONLY for identifying what is visible in which turn phase,
+and for understanding cause-and-effect chains between movement errors.
+═══════════════════════════════════════════════════════
+
+CRITICAL RULE — SYMPTOM VS ROOT CAUSE:
+What you SEE on a frame is often a SYMPTOM, not the root cause.
+Always ask: "What caused this?" before prescribing.
+
+Example: You see weight on the inside ski (symptom).
+Possible root causes:
+- Upper body rotation → causes inside lean → causes inside ski pressure
+- Aft pressure → combined with rotation → causes inside ski loading
+- Inside lean from initiation → causes pressure to shift inward
+
+WHAT IS VISIBLE IN EACH TURN PHASE:
+Use the skier's ski tip direction relative to the camera to identify turn phase.
+
+PHASE 1 — EARLY TURN (ski tips 40-60 degrees away from camera):
+Reliable to see: aft pressure (hips behind heels), upper body rotation at initiation, stiff joints, excessive step stance
+NOT reliable: inside/outside ski pressure, hip rotation
+
+PHASE 2 — APPROACHING FALL LINE (ski tips 20-30 degrees away):
+Reliable to see: upper body rotation (outside shoulder rotating forward), hip rotation, poor flex ratios, arm position
+NOT reliable: exact fore/aft pressure
+
+PHASE 3 — FALL LINE (ski tips pointing toward camera — most important):
+Reliable to see: inside lean, inside ski pressure, angulation or lack of it, edge angle, arm/hand position
+NOT reliable: aft/fore pressure
+
+PHASE 4 — STEERING PHASE / LATE TURN (ski tips 20-30 degrees to opposite side):
+Reliable to see: excessive step stance, aft pressure in finish, hip rotation completing
+NOT reliable: initial cause of problems (you are seeing consequences here)
+
+PHASE 5 — EDGE CHANGE (ski tips nearly parallel and horizontal):
+Reliable to see: balance at transition, step stance offset, upper body position
+NOT reliable: most individual skill issues
+
+CAUSE AND EFFECT CHAINS:
+Chain 1: UPPER BODY ROTATION → inside lean → inside ski pressure → loss of edge control → skidding
+Chain 2: AFT PRESSURE → difficulty initiating turn → upper body rotation as compensation → skidding at finish
+Chain 3: HIP ROTATION → flat skis → loss of edge grip → skidding → loss of speed control
+Chain 4: STIFF JOINTS → cannot absorb terrain → balance disrupted → compensatory movements
+Chain 5: EXCESSIVE STEP STANCE → aft pressure on inside ski at finish → new turn starts in backseat
+
+VIEWING ANGLE GUIDE:
+FRONT VIEW: Best for lateral balance, inside/outside lean, arm position, rotation
+SIDE VIEW: Best for fore/aft balance, step stance, flex ratios, joint angles
+`;
+
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Content-Type': 'application/json'
@@ -260,11 +313,29 @@ PSIA KNOWLEDGE BASE (your ONLY reference)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${PSIA_KNOWLEDGE}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL INDICATORS & TURN PHASE GUIDE — use this to identify what you can reliably see
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${DDS_KNOWLEDGE}
 
 TASK: Analyze the provided ski frames using the PSIA Movement Analysis process.
 
+STEP 0 — IDENTIFY TURN PHASES
+For each frame, first determine which turn phase it shows based on ski tip direction relative to camera. This determines what you can reliably observe in each frame.
+
+STEP 0B — OBSERVE SYMPTOMS
+Based on the turn phase guide, note what is visible and reliable in each frame.
+
+STEP 0C — IDENTIFY ROOT CAUSE
+Apply the cause-and-effect chains. Ask "what caused this?" before deciding on skill focus. Do not prescribe based on a symptom if you can identify the root cause.
+
 STEP 1 — FRAME SELECTION
-You will receive multiple frames extracted from a ski video. Identify which single frame MOST CLEARLY shows the primary skill issue you are prescribing — ideally at or just past the fall line where the movement pattern is most visible.
+You will receive multiple frames extracted from a ski video. Select the ONE frame that most clearly and directly illustrates the specific movement pattern you will describe in your feedback. The skier will see this frame on their phone next to your written feedback — it must serve as a precise visual reference for exactly what you are commenting on.
+
+Rules for frame selection:
+- Choose the frame where the coaching point (the movement issue or skill imbalance) is most visibly obvious
+- The frame and the feedback text must match: if you describe the skier's weight being back, choose the frame where that is clearest; if you describe an arm position, choose the frame where the arm is most clearly in that position
+- Do NOT select a frame just because it is at the fall line — only select it if it shows what you are actually talking about
+- If no single frame clearly shows the issue, choose the one that comes closest
 
 Respond with your chosen frame number in this format exactly:
 BEST_FRAME: [number]
@@ -332,7 +403,7 @@ TONE RULES (from PSIA manual):
         messages: [{
           role: 'user',
           content: [
-            { type: 'text', text: 'Please analyze all frames, select the most representative frame, and give PSIA-based coaching feedback.' },
+            { type: 'text', text: 'Please analyze all frames, identify the turn phase of each, find the root cause, select the best frame, and give PSIA-based coaching feedback.' },
             ...imageContent
           ]
         }]
