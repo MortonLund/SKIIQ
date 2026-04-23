@@ -266,7 +266,7 @@ Rules:
 - Plain everyday language — avoid technical abbreviations (CM, BOS, DIRT) unless you explain them in simple terms immediately
 - Use analogies and real-world comparisons (e.g. "like sitting back in a chair" or "like pushing down on a bicycle pedal")
 - Do not copy sentences from the reference — explain it fresh, as if talking to a friend
-- Maximum 200 words`;
+- Be concise. Maximum 130 words. Cut anything that is not essential to understanding.`;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -277,7 +277,7 @@ Rules:
         },
         body: JSON.stringify({
           model: 'claude-opus-4-5',
-          max_tokens: 600,
+          max_tokens: 400,
           messages: [{ role: 'user', content: prompt }]
         })
       });
@@ -322,7 +322,7 @@ Rules:
 - Plain everyday language — explain any technical terms immediately
 - Be encouraging and specific
 - Relate every answer back to the skier's specific focus area
-- Maximum 150 words
+- Keep your answer short and direct. Maximum 80 words. One key point only.
 
 EXERCISE CONTINUITY RULE:
 You have access to the full conversation history. If you have already suggested an exercise in this conversation, do NOT suggest the same exercise again without acknowledging it. If you want to suggest the same exercise again, reference it explicitly: "As I mentioned, try [exercise] — this time focus on..." If you suggest a new exercise, make sure it builds on or complements what has already been discussed. Always show awareness of what has already been said.
@@ -340,7 +340,7 @@ ${isLastQuestion ? `CLOSING RULE: This is the skier's final question. After answ
         },
         body: JSON.stringify({
           model: 'claude-opus-4-5',
-          max_tokens: 400,
+          max_tokens: 250,
           system: chatSystemPrompt,
           messages
         })

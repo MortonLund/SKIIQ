@@ -493,6 +493,18 @@
   .chat-send-btn:hover { opacity: 0.85; }
   .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  .chat-blink-notice {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    padding: 10px 14px;
+    animation: blink-notice 2s ease-in-out infinite;
+  }
+  @keyframes blink-notice {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
   .error-box {
     margin-top: 20px;
     padding: 16px;
@@ -603,6 +615,8 @@ const UI_TEXT = {
     chatPlaceholder: 'Stil et spørgsmål til din instruktør...',
     chatSend: 'Send',
     chatNotice: 'Du har 3 spørgsmål — skiløb læres på pisten, ikke på skærmen 😊',
+    chatBlinkNotice: 'Du kan stille 3 opfølgningsspørgsmål — og kun 3, for skiløb læres ved at gøre det 😉',
+    chatClosing: 'Skiløb læres ved at gøre det. Gå ud og prøv øvelserne nu — og film en ny tur senere. God tur! 🎿',
   },
   en: {
     uploadTip: 'Tip: Film the skier from the front and as they pass by you for best results.',
@@ -626,6 +640,8 @@ const UI_TEXT = {
     chatPlaceholder: 'Ask your instructor a question about this technique...',
     chatSend: 'Send',
     chatNotice: 'You have 3 questions — skiing is learned on the snow, not on the screen 😊',
+    chatBlinkNotice: 'You can ask 3 follow-up questions — and only 3, because skiing is learned by doing it 😉',
+    chatClosing: 'Skiing is learned by doing. Go try the exercises now — then film another run later. Happy skiing! 🎿',
   },
   zh: {
     uploadTip: '提示：从正面拍摄滑雪者，并在他们经过您身旁时拍摄，效果最佳。',
@@ -649,6 +665,8 @@ const UI_TEXT = {
     chatPlaceholder: '向教练提问关于这个技术...',
     chatSend: '发送',
     chatNotice: '你有3个问题机会——滑雪是在雪上学的，不是在屏幕上 😊',
+    chatBlinkNotice: '你可以提3个后续问题——只有3个，因为滑雪是通过实践学会的 😉',
+    chatClosing: '滑雪是通过练习学会的。现在去尝试练习——然后再拍一段视频。滑雪愉快！🎿',
   }
 };
 
@@ -1058,14 +1076,18 @@ function speakSection(text, btn) {
     if (currentLang === 'zh') {
       voice = voices.find(v => v.lang.startsWith('zh')) || null;
     } else {
-      const preferred = ['Google US English', 'Alex', 'Tom', 'Fred', 'Microsoft Guy Online (Natural) - English (United States)', 'Google UK English Male', 'Daniel'];
+      const preferred = ['Google UK English Male', 'Microsoft David', 'Daniel', 'David', 'James', 'Alex', 'Tom', 'Fred', 'Google US English'];
       for (const name of preferred) {
         const found = voices.find(v => v.name === name);
         if (found) { voice = found; break; }
       }
-      if (!voice) voice = voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('male'))
-                        || voices.find(v => v.lang === 'en-US')
-                        || voices.find(v => v.lang.startsWith('en')) || null;
+      if (!voice) {
+        const maleKeywords = ['male', 'david', 'daniel', 'james', 'tom', 'fred', 'guy'];
+        voice = voices.find(v => v.lang.startsWith('en') && maleKeywords.some(k => v.name.toLowerCase().includes(k)))
+               || voices.find(v => v.lang === 'en-GB')
+               || voices.find(v => v.lang === 'en-US')
+               || voices.find(v => v.lang.startsWith('en')) || null;
+      }
     }
     if (voice) utterance.voice = voice;
 
@@ -1134,7 +1156,11 @@ async function runTechnicalExplanation() {
     chatHistory = [];
     chatQuestionCount = 0;
     const chatBox = createChatBox();
-    div.after(chatBox);
+    const blinkEl = document.createElement('div');
+    blinkEl.id = 'chatBlinkNotice';
+    blinkEl.className = 'chat-blink-notice';
+    blinkEl.textContent = UI_TEXT[currentLang].chatBlinkNotice;
+    div.after(blinkEl, chatBox);
     document.getElementById('chatInput').focus();
 
   } catch(err) {
@@ -1223,7 +1249,16 @@ async function sendChatMessage() {
 
     const answer = data.answer || '';
     const loadingEl = document.getElementById(loadingId);
-    if (loadingEl) loadingEl.textContent = answer;
+    if (loadingEl) {
+      loadingEl.textContent = answer;
+      const speakBtn = document.createElement('button');
+      speakBtn.className = 'speak-btn';
+      speakBtn.title = 'Listen';
+      speakBtn.textContent = '🔊';
+      speakBtn.style.cssText = 'display:block;margin-top:6px;font-size:13px;';
+      speakBtn.addEventListener('click', () => speakSection(answer, speakBtn));
+      loadingEl.appendChild(speakBtn);
+    }
 
     chatHistory.push({ role: 'user', content: question });
     chatHistory.push({ role: 'assistant', content: answer });
@@ -1233,6 +1268,12 @@ async function sendChatMessage() {
       if (inputRow) inputRow.style.display = 'none';
       const notice = document.getElementById('chatNotice');
       if (notice) notice.style.display = 'none';
+      const blinkNotice = document.getElementById('chatBlinkNotice');
+      if (blinkNotice) blinkNotice.style.display = 'none';
+      const closing = document.createElement('div');
+      closing.style.cssText = 'font-size:18px;font-weight:700;color:#5DADE2;margin-top:20px;text-align:center;padding:14px;';
+      closing.textContent = UI_TEXT[currentLang].chatClosing;
+      document.getElementById('chatBox').appendChild(closing);
       return;
     }
 
