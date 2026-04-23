@@ -293,11 +293,13 @@ Rules:
 
     // ── CHAT MODE ────────────────────────────────────────────────────────────────
     if (mode === 'chat') {
-      const { question, skill, technicalExplanation, history } = body;
+      const { question, skill, technicalExplanation, history, questionNumber } = body;
 
       const langInstr = language === 'zh'
         ? 'Respond entirely in Simplified Chinese (Mandarin). Use plain everyday language.'
         : 'Respond entirely in English. Use plain everyday language.';
+
+      const isLastQuestion = questionNumber >= 3;
 
       const chatSystemPrompt = `You are a friendly ski instructor continuing a conversation with a skier on the slopes. Keep your answer short and practical — maximum 150 words.
 
@@ -320,7 +322,12 @@ Rules:
 - Plain everyday language — explain any technical terms immediately
 - Be encouraging and specific
 - Relate every answer back to the skier's specific focus area
-- Maximum 150 words`;
+- Maximum 150 words
+
+EXERCISE CONTINUITY RULE:
+You have access to the full conversation history. If you have already suggested an exercise in this conversation, do NOT suggest the same exercise again without acknowledging it. If you want to suggest the same exercise again, reference it explicitly: "As I mentioned, try [exercise] — this time focus on..." If you suggest a new exercise, make sure it builds on or complements what has already been discussed. Always show awareness of what has already been said.
+
+${isLastQuestion ? `CLOSING RULE: This is the skier's final question. After answering, end your response with a warm, encouraging closing that sends them back to the slope — for example: "That's the best advice I can give you from here — now get out there and feel it for yourself! The slope is your best teacher." Adapt the exact wording naturally to fit your answer.` : ''}`;
 
       const messages = [...(history || []), { role: 'user', content: question }];
 

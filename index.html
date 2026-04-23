@@ -578,6 +578,7 @@ let lastAnalysisSkill = '';
 let ttsSpeakingBtn = null;
 let chatHistory = [];
 let lastTechnicalExplanation = '';
+let chatQuestionCount = 0;
 
 const UI_TEXT = {
   da: {
@@ -601,6 +602,7 @@ const UI_TEXT = {
     techLoading: 'Henter...',
     chatPlaceholder: 'Stil et spørgsmål til din instruktør...',
     chatSend: 'Send',
+    chatNotice: 'Du har 3 spørgsmål — skiløb læres på pisten, ikke på skærmen 😊',
   },
   en: {
     uploadTip: 'Tip: Film the skier from the front and as they pass by you for best results.',
@@ -623,6 +625,7 @@ const UI_TEXT = {
     techLoading: 'Loading...',
     chatPlaceholder: 'Ask your instructor a question about this technique...',
     chatSend: 'Send',
+    chatNotice: 'You have 3 questions — skiing is learned on the snow, not on the screen 😊',
   },
   zh: {
     uploadTip: '提示：从正面拍摄滑雪者，并在他们经过您身旁时拍摄，效果最佳。',
@@ -645,6 +648,7 @@ const UI_TEXT = {
     techLoading: '加载中...',
     chatPlaceholder: '向教练提问关于这个技术...',
     chatSend: '发送',
+    chatNotice: '你有3个问题机会——滑雪是在雪上学的，不是在屏幕上 😊',
   }
 };
 
@@ -1128,6 +1132,7 @@ async function runTechnicalExplanation() {
 
     lastTechnicalExplanation = explanation;
     chatHistory = [];
+    chatQuestionCount = 0;
     const chatBox = createChatBox();
     div.after(chatBox);
     document.getElementById('chatInput').focus();
@@ -1145,25 +1150,37 @@ function createChatBox() {
   const box = document.createElement('div');
   box.className = 'chat-box';
   box.id = 'chatBox';
+
+  const messages = document.createElement('div');
+  messages.className = 'chat-messages';
+  messages.id = 'chatMessages';
+
+  const notice = document.createElement('div');
+  notice.id = 'chatNotice';
+  notice.style.cssText = 'padding:8px 14px;font-size:11px;color:var(--muted);border-top:1px solid rgba(93,173,226,0.1);text-align:center;';
+  notice.textContent = t.chatNotice;
+
   const input = document.createElement('input');
   input.type = 'text';
   input.id = 'chatInput';
   input.className = 'chat-input';
   input.placeholder = t.chatPlaceholder;
   input.addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
+
   const sendBtn = document.createElement('button');
   sendBtn.className = 'chat-send-btn';
   sendBtn.id = 'chatSendBtn';
   sendBtn.textContent = t.chatSend;
   sendBtn.addEventListener('click', sendChatMessage);
+
   const inputRow = document.createElement('div');
   inputRow.className = 'chat-input-row';
+  inputRow.id = 'chatInputRow';
   inputRow.appendChild(input);
   inputRow.appendChild(sendBtn);
-  const messages = document.createElement('div');
-  messages.className = 'chat-messages';
-  messages.id = 'chatMessages';
+
   box.appendChild(messages);
+  box.appendChild(notice);
   box.appendChild(inputRow);
   return box;
 }
@@ -1173,7 +1190,11 @@ async function sendChatMessage() {
   if (!input) return;
   const question = input.value.trim();
   if (!question) return;
+  if (chatQuestionCount >= 3) return;
   input.value = '';
+
+  chatQuestionCount++;
+  const isLast = chatQuestionCount >= 3;
 
   const sendBtn = document.getElementById('chatSendBtn');
   if (sendBtn) sendBtn.disabled = true;
@@ -1192,6 +1213,7 @@ async function sendChatMessage() {
         skill: lastAnalysisSkill,
         technicalExplanation: lastTechnicalExplanation,
         history: chatHistory.slice(),
+        questionNumber: chatQuestionCount,
         language: currentLang
       })
     });
@@ -1206,9 +1228,18 @@ async function sendChatMessage() {
     chatHistory.push({ role: 'user', content: question });
     chatHistory.push({ role: 'assistant', content: answer });
 
+    if (isLast) {
+      const inputRow = document.getElementById('chatInputRow');
+      if (inputRow) inputRow.style.display = 'none';
+      const notice = document.getElementById('chatNotice');
+      if (notice) notice.style.display = 'none';
+      return;
+    }
+
   } catch(err) {
     const loadingEl = document.getElementById(loadingId);
     if (loadingEl) loadingEl.textContent = 'Something went wrong. Please try again.';
+    chatQuestionCount--;
   }
 
   if (sendBtn) sendBtn.disabled = false;
@@ -1243,6 +1274,7 @@ function resetApp() {
   lastAnalysisSkill = '';
   chatHistory = [];
   lastTechnicalExplanation = '';
+  chatQuestionCount = 0;
   if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
   videoEl = null;
   const preview = document.getElementById('videoPreview');
