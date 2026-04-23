@@ -291,6 +291,63 @@ Rules:
       return { statusCode: 200, headers, body: JSON.stringify({ explanation }) };
     }
 
+    // ── CHAT MODE ────────────────────────────────────────────────────────────────
+    if (mode === 'chat') {
+      const { question, skill, technicalExplanation, history } = body;
+
+      const langInstr = language === 'zh'
+        ? 'Respond entirely in Simplified Chinese (Mandarin). Use plain everyday language.'
+        : 'Respond entirely in English. Use plain everyday language.';
+
+      const chatSystemPrompt = `You are a friendly ski instructor continuing a conversation with a skier on the slopes. Keep your answer short and practical — maximum 150 words.
+
+${langInstr}
+
+The skier's identified skill focus is: "${skill}".
+
+The technical explanation they already read:
+"${technicalExplanation}"
+
+Use the knowledge below to answer accurately. Always relate your answer to the specific skill and context above.
+
+PSIA KNOWLEDGE:
+${PSIA_KNOWLEDGE}
+
+VISUAL INDICATORS & TURN PHASE GUIDE:
+${DDS_KNOWLEDGE}
+
+Rules:
+- Plain everyday language — explain any technical terms immediately
+- Be encouraging and specific
+- Relate every answer back to the skier's specific focus area
+- Maximum 150 words`;
+
+      const messages = [...(history || []), { role: 'user', content: question }];
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-5',
+          max_tokens: 400,
+          system: chatSystemPrompt,
+          messages
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        return { statusCode: response.status, headers, body: JSON.stringify({ error: data?.error?.message || 'API error' }) };
+      }
+
+      const answer = (data.content || []).map(c => c.text || '').join('').trim();
+      return { statusCode: 200, headers, body: JSON.stringify({ answer }) };
+    }
+
     // ── MAIN ANALYSIS MODE ───────────────────────────────────────────────────────
     if (!images || !Array.isArray(images) || images.length === 0) {
       return {

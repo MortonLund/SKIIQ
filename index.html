@@ -424,6 +424,75 @@
   .speak-btn:hover { opacity: 0.9; }
   .speak-btn.speaking { opacity: 1; }
 
+  .chat-box {
+    margin-top: 14px;
+    border-radius: 12px;
+    background: rgba(93,173,226,0.04);
+    border: 1px solid rgba(93,173,226,0.12);
+    overflow: hidden;
+  }
+  .chat-messages {
+    padding: 14px;
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chat-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .chat-bubble.user {
+    align-self: flex-end;
+    background: rgba(93,173,226,0.2);
+    border-bottom-right-radius: 4px;
+    color: var(--snow);
+  }
+  .chat-bubble.ai {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.06);
+    border-bottom-left-radius: 4px;
+    color: rgba(247,250,251,0.85);
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid rgba(93,173,226,0.1);
+  }
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(93,173,226,0.2);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--snow);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+  .chat-input::placeholder { color: var(--muted); }
+  .chat-input:focus { border-color: rgba(93,173,226,0.4); }
+  .chat-send-btn {
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--frost);
+    color: var(--alpine);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .chat-send-btn:hover { opacity: 0.85; }
+  .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
   .error-box {
     margin-top: 20px;
     padding: 16px;
@@ -507,6 +576,8 @@ let videoUrl = null;
 let cropGeneration = 0;
 let lastAnalysisSkill = '';
 let ttsSpeakingBtn = null;
+let chatHistory = [];
+let lastTechnicalExplanation = '';
 
 const UI_TEXT = {
   da: {
@@ -528,6 +599,8 @@ const UI_TEXT = {
     labelQuote: '💬 Mærk dette',
     techBtn: '📖 Dyk ned i den tekniske forklaring',
     techLoading: 'Henter...',
+    chatPlaceholder: 'Stil et spørgsmål til din instruktør...',
+    chatSend: 'Send',
   },
   en: {
     uploadTip: 'Tip: Film the skier from the front and as they pass by you for best results.',
@@ -548,6 +621,8 @@ const UI_TEXT = {
     labelQuote: '💬 Feel this',
     techBtn: '📖 Dive into the technical explanation',
     techLoading: 'Loading...',
+    chatPlaceholder: 'Ask your instructor a question about this technique...',
+    chatSend: 'Send',
   },
   zh: {
     uploadTip: '提示：从正面拍摄滑雪者，并在他们经过您身旁时拍摄，效果最佳。',
@@ -568,6 +643,8 @@ const UI_TEXT = {
     labelQuote: '💬 感受这个',
     techBtn: '📖 深入了解技术说明',
     techLoading: '加载中...',
+    chatPlaceholder: '向教练提问关于这个技术...',
+    chatSend: '发送',
   }
 };
 
@@ -1049,11 +1126,104 @@ async function runTechnicalExplanation() {
     techBtn.parentNode.insertBefore(div, techBtn.nextSibling);
     techBtn.style.display = 'none';
 
+    lastTechnicalExplanation = explanation;
+    chatHistory = [];
+    const chatBox = createChatBox();
+    div.after(chatBox);
+    document.getElementById('chatInput').focus();
+
   } catch(err) {
     techBtn.disabled = false;
     techBtn.textContent = t.techBtn;
     showError(err.message);
   }
+}
+
+// ─── CHAT ────────────────────────────────────────────────────────────────────
+function createChatBox() {
+  const t = UI_TEXT[currentLang];
+  const box = document.createElement('div');
+  box.className = 'chat-box';
+  box.id = 'chatBox';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'chatInput';
+  input.className = 'chat-input';
+  input.placeholder = t.chatPlaceholder;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
+  const sendBtn = document.createElement('button');
+  sendBtn.className = 'chat-send-btn';
+  sendBtn.id = 'chatSendBtn';
+  sendBtn.textContent = t.chatSend;
+  sendBtn.addEventListener('click', sendChatMessage);
+  const inputRow = document.createElement('div');
+  inputRow.className = 'chat-input-row';
+  inputRow.appendChild(input);
+  inputRow.appendChild(sendBtn);
+  const messages = document.createElement('div');
+  messages.className = 'chat-messages';
+  messages.id = 'chatMessages';
+  box.appendChild(messages);
+  box.appendChild(inputRow);
+  return box;
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+  const question = input.value.trim();
+  if (!question) return;
+  input.value = '';
+
+  const sendBtn = document.getElementById('chatSendBtn');
+  if (sendBtn) sendBtn.disabled = true;
+
+  addChatBubble(question, 'user');
+  const loadingId = 'chat-loading-' + Date.now();
+  addChatBubble('...', 'ai', loadingId);
+
+  try {
+    const response = await fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mode: 'chat',
+        question,
+        skill: lastAnalysisSkill,
+        technicalExplanation: lastTechnicalExplanation,
+        history: chatHistory.slice(),
+        language: currentLang
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'API error');
+
+    const answer = data.answer || '';
+    const loadingEl = document.getElementById(loadingId);
+    if (loadingEl) loadingEl.textContent = answer;
+
+    chatHistory.push({ role: 'user', content: question });
+    chatHistory.push({ role: 'assistant', content: answer });
+
+  } catch(err) {
+    const loadingEl = document.getElementById(loadingId);
+    if (loadingEl) loadingEl.textContent = 'Something went wrong. Please try again.';
+  }
+
+  if (sendBtn) sendBtn.disabled = false;
+  input.focus();
+}
+
+function addChatBubble(text, role, id) {
+  const messages = document.getElementById('chatMessages');
+  if (!messages) return;
+  const bubble = document.createElement('div');
+  bubble.className = `chat-bubble ${role}`;
+  bubble.textContent = text;
+  if (id) bubble.id = id;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -1071,6 +1241,8 @@ function resetApp() {
   frameLabels = [];
   currentFile = null;
   lastAnalysisSkill = '';
+  chatHistory = [];
+  lastTechnicalExplanation = '';
   if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
   videoEl = null;
   const preview = document.getElementById('videoPreview');
