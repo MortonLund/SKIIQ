@@ -169,55 +169,146 @@ KEY PSIA TERMINOLOGY:
 
 const DDS_KNOWLEDGE = `
 ═══════════════════════════════════════════════════════
-DEN DANSKE SKISKOLES ALPIN MANUAL — VISUAL INDICATORS & TURN PHASE GUIDE
+DEN DANSKE SKISKOLES ALPIN MANUAL — TECHNICAL ANALYSIS FRAMEWORK
 Source: Den Danske Skiskoles Alpin Manual, D14-D15
-Use this section ONLY for identifying what is visible in which turn phase,
-and for understanding cause-and-effect chains between movement errors.
+© Den Danske Skiskole
 ═══════════════════════════════════════════════════════
 
-CRITICAL RULE — SYMPTOM VS ROOT CAUSE:
-What you SEE on a frame is often a SYMPTOM, not the root cause.
-Always ask: "What caused this?" before prescribing.
+VISUAL SIGNS OF GOOD SKIING:
+=============================
 
-Example: You see weight on the inside ski (symptom).
-Possible root causes:
-- Upper body rotation → causes inside lean → causes inside ski pressure
-- Aft pressure → combined with rotation → causes inside ski loading
-- Inside lean from initiation → causes pressure to shift inward
+BALANCE AND STARTING POSITION (good):
+- Balance held primarily on outside ski
+- Center of gravity neutral — midway along ski length
+- Whole body active and mobile to maintain balance
+- Movements originate from ankle, supported by knee, hip and back
+- Hips/pelvis neutral and stable — forms stable base for leg movements in all directions
+- Inner leg bends through turn, outer leg extends — balance stays on outside ski
+- Upper body remains more vertically upright through steering phase — creating an angle between upper body and legs (angulation)
+- At turn finish: inside hand, inside shoulder and inner buttock are HIGHER than outside equivalents
+- Hands forward of body at all times
 
-WHAT IS VISIBLE IN EACH TURN PHASE:
-Use the skier's ski tip direction relative to the camera to identify turn phase.
+STEERING (good):
+- Turn holds a round shape — ski gradually rotates through turn
+- Feet and legs rotate UNDER a stable upper body to steer skis
+- Thighbone rotates in hip socket WITHOUT hip rotating with it
+- Skis rotate harmoniously and consistently at start of turn
+- Skis run forward in track through entire turn
+- Ski tips move through turn — tips travel from one side of arc to other
 
-PHASE 1 — EARLY TURN (ski tips 40-60 degrees away from camera):
-Reliable to see: aft pressure (hips behind heels), upper body rotation at initiation, stiff joints, excessive step stance
-NOT reliable: inside/outside ski pressure, hip rotation
+PRESSURE CONTROL (good):
+- Skis run smoothly on snow without chattering — constant snow contact
+- All joints move through turn like shock absorbers on a car
+- Skis bow through entire turn with pressure along full ski length
+- Degree of leg flex/extension changes through arc — adapts to terrain
+- Turn initiation happens harmoniously with quiet weight transfer from ski to ski
+- Upper body stays quiet and still
 
-PHASE 2 — APPROACHING FALL LINE (ski tips 20-30 degrees away):
-Reliable to see: upper body rotation (outside shoulder rotating forward), hip rotation, poor flex ratios, arm position
-NOT reliable: exact fore/aft pressure
+EDGING (good):
+- Skis do not slide uncontrolled sideways — turn holds round shape
+- Both skis angled similarly through turn
+- Edging originates from ankle and is supported by moving center of gravity inward
 
-PHASE 3 — FALL LINE (ski tips pointing toward camera — most important):
-Reliable to see: inside lean, inside ski pressure, angulation or lack of it, edge angle, arm/hand position
-NOT reliable: aft/fore pressure
+VISUAL SIGNS OF POOR SKIING:
+=============================
 
-PHASE 4 — STEERING PHASE / LATE TURN (ski tips 20-30 degrees to opposite side):
-Reliable to see: excessive step stance, aft pressure in finish, hip rotation completing
-NOT reliable: initial cause of problems (you are seeing consequences here)
+BALANCE PROBLEMS:
+- Balance on inside ski — outside ski unweighted
+- Hands and hips BEHIND ski boots
+- Upper body leans into turn throughout entire arc
+- Lower legs vertical
+- Skier stiff and static — terrain destroys balance
+- Ski tips lift off snow
 
-PHASE 5 — EDGE CHANGE (ski tips nearly parallel and horizontal):
-Reliable to see: balance at transition, step stance offset, upper body position
-NOT reliable: most individual skill issues
+STEERING PROBLEMS:
+- Track is abrupt and zig-zagged
+- Skis slide apart and end in snowplow
+- One ski rotates or stems out at turn initiation
+- UPPER BODY ROTATION: Inside hand is FURTHER BACK than outside hand. Outside shoulder rotates further around than inside shoulder — shoulder axis diagonal to ski direction.
+- After pole plant: skier throws hand sideways to start turn
+- Ski tips don't move much — tail of ski slides from side to side instead
+
+PRESSURE CONTROL PROBLEMS:
+- Skis run choppily through arc
+- Skis skid out at turn finish
+- Ski joints stiff — legs neither flex nor extend as terrain changes
+- Skier bounces straight up at turn initiation
+
+EDGING PROBLEMS:
+- Skis slide away under skier — broad sliding track
+- Skis only get edged suddenly after fall line is passed
+- Outside knee hides behind inside knee — locked position
+- Skier throws self into new turn
+
+DEVELOPMENT POINTS — ROOT CAUSES:
+===================================
+
+CRITICAL — SYMPTOM VS ROOT CAUSE:
+What you see is often a SYMPTOM. Always ask "what caused this?" first.
 
 CAUSE AND EFFECT CHAINS:
 Chain 1: UPPER BODY ROTATION → inside lean → inside ski pressure → loss of edge control → skidding
-Chain 2: AFT PRESSURE → difficulty initiating turn → upper body rotation as compensation → skidding at finish
-Chain 3: HIP ROTATION → flat skis → loss of edge grip → skidding → loss of speed control
-Chain 4: STIFF JOINTS → cannot absorb terrain → balance disrupted → compensatory movements
-Chain 5: EXCESSIVE STEP STANCE → aft pressure on inside ski at finish → new turn starts in backseat
+Chain 2: AFT PRESSURE → difficulty initiating turn → upper body rotation as compensation → skidding finish
+Chain 3: STIFF JOINTS → cannot absorb terrain → balance disrupted → compensatory movements
+Chain 4: EXCESSIVE STEP STANCE → aft pressure on inside ski at finish → new turn starts in backseat
+Chain 5: INSIDE LEAN → pressure on inside ski → outside ski loses grip → unstable balance
 
-VIEWING ANGLE GUIDE:
-FRONT VIEW: Best for lateral balance, inside/outside lean, arm position, rotation
-SIDE VIEW: Best for fore/aft balance, step stance, flex ratios, joint angles
+1. EXCESSIVE STEP STANCE
+Visible sign: Ski tips heavily offset — more than slope gradient requires.
+Root cause: Originates in steering phase, greatest negative effect at turn release.
+Exercises: Focus on keeping feet/ski tips level. Finish each turn with weight on sweetspot.
+
+2. STIFF SKI JOINTS
+Visible sign: Body cramped and locked — no visible flex or extension. Legs at same angle throughout.
+Exercises: Imagine being a rag doll. Small jumps in large turns — impossible to jump if stiff.
+
+3. POOR FLEX RATIOS
+VERSION A — Knee forward, upright torso:
+Visible sign: Knees pushed far forward, upper body vertical and upright. All terrain absorbed through legs.
+VERSION B — Upper body forward, vertical lower legs:
+Visible sign: Upper body tipped far forward, lower legs vertical. All terrain absorbed through upper body.
+
+4. UPPER BODY ROTATION
+CRITICAL — HOW TO DISTINGUISH FROM INSIDE LEAN:
+- ROTATION: Shoulders are ACTIVELY TWISTING. Outside shoulder rotated FURTHER forward than inside shoulder. Shoulder axis diagonal to ski direction. Inside hand clearly BEHIND outside hand. This is a MOVEMENT.
+- INSIDE LEAN: Shoulders PASSIVE. Whole body leans as one unit. No active twisting. This is a POSITION.
+- KEY TEST: Look at line between shoulders. Diagonal to ski direction = rotation. Both shoulders same angle but body leans = inside lean.
+Visible signs: Outside shoulder rotated further than inside. Inside hand behind outside hand. Arms may swing.
+Rotation is typically a turn RELEASE problem.
+Exercises: Both hands forward — always see both hands. Inside hand furthest forward through turn.
+
+5. AFT PRESSURE / BACKSEAT
+Visible signs: Hips clearly BEHIND heels. Ski tips may lift. Arms pushed FORWARD as counterbalance.
+TIMING NOTE: Easiest to see EARLY in turn. At fall line, harder to confirm from frontal view.
+Exercises: Arms forward. Press big toe down into boot. Press shin forward in boot.
+
+6. INSIDE LEAN
+CRITICAL — HOW TO DISTINGUISH FROM ROTATION:
+- INSIDE LEAN: Whole body leans as ONE UNIT. Inside hip drops lower than outside hip. No shoulder twisting. This is a POSITION.
+- ROTATION: Shoulders twist. Body does not necessarily lean as unit.
+- KEY TEST: Inside hip clearly lower than outside hip, body leans as unit = inside lean. Shoulders twisted relative to ski direction = rotation.
+Visible signs: Inside hip drops lower than outside hip. Inside ski carries too much pressure. Outside ski appears light.
+Exercises: Ski with lifted inside ski. Chest over outside ski binding. Create angle between thigh and upper body.
+
+TURN PHASE VISIBILITY GUIDE:
+==============================
+
+EARLY TURN (ski tips 40-60 degrees away from camera):
+Reliable: Backseat, upper body rotation at initiation, stiff joints, step stance
+NOT reliable: Inside/outside ski pressure
+
+FALL LINE (ski tips toward camera — most important):
+Reliable: Inside lean (whole body as unit, inside hip lower), inside ski pressure, angulation, edge angle, arm position
+NOT reliable: Aft/fore pressure
+CRITICAL: Do NOT confuse inside lean with rotation. Look at shoulder axis AND hip levels.
+
+LATE TURN (ski tips 20-30 degrees opposite side):
+Reliable: Step stance, aft pressure in finish, rotation completing
+NOT reliable: Initial cause of problems
+
+VIEWING ANGLE:
+FRONT VIEW: Best for rotation, inside lean, arm position, angulation
+SIDE VIEW: Best for backseat, step stance, flex ratios, joint angles
 `;
 
 const headers = {
